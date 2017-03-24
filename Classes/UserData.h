@@ -27,6 +27,12 @@ public:
 	CC_SYNTHESIZE_ADD(int, _colorBubble, ColorBubble); //可变泡泡
 	CC_SYNTHESIZE_ADD(int, _hourglass, Hourglass); //沙漏
 	CC_SYNTHESIZE_ADD(int, _gold, Gold);  //金币
+    CC_SYNTHESIZE_ADD(int, _sliver, Sliver);  //银币
+    
+    CC_SYNTHESIZE_ADD(int, _hp, Hp);  // 体力
+    CC_SYNTHESIZE_ADD(int, _star, Star);  //获得星星的总数量
+    
+    
 	CC_SYNTHESIZE_ADD(int, _rebirth, Rebirth); //复活药
 	CC_SYNTHESIZE_ADD(int, _bestScore, BestScore);
 	CC_SYNTHESIZE_ADD(unsigned int, _level, Level);

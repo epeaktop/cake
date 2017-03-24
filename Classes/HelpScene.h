@@ -33,6 +33,17 @@ private:
     bool enableMove;            //允许自动移动
     float y_last;               //上一帧 y的位置
     
+    Sprite* sliver_ = nullptr;
+    Label*  sliverNumber_ = nullptr;
+    
+    Sprite* hp_ = nullptr;
+    Sprite* star_ = nullptr;
+    
+    
+    Label* hpNumber_ = nullptr;
+    Label* starNumber_ = nullptr;
+    
+    
 public:
 
 	virtual bool init();
@@ -50,6 +61,13 @@ public:
 	virtual void onTouchMoved(Touch* touch, Event* event);
     void buttonCallback(Node *pNode);
     void undateState(float dt);
+    void showSliver();
+    
+    void showHp();
+    void showStar();
+    
+    int getStarNumbers();
+    
 };
 
 

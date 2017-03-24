@@ -6,9 +6,10 @@
 using namespace std;
 
 /**
- * @@ ×Ô¼º¶¨ÒåµÄº¯Êı¿â,±ÜÃâ°üº¬boost¿â,¾¡Á¿ÓÃc++17,¿çÆ½Ì¨!!
+ * @@ è‡ªå·±å®šä¹‰çš„å‡½æ•°åº“,é¿å…åŒ…å«booståº“,å°½é‡ç”¨c++17,è·¨å¹³å°!!
  * @@ jiangxf @2016.12.15
  */
+
 class Tools
 {
 public:
@@ -18,13 +19,13 @@ public:
     int string2number(string str);
     int _stoi(string s);
     string _itos(int s);
-
-
+    float getWidth();
+    float getHeigh();
 private:
     static Tools* instance_;
         
 };
 
 #define TI Tools::getInstance
-
+	
 #endif  // __HELLOWORLD_SCENE_H__

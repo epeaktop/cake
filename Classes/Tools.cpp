@@ -3,8 +3,11 @@
 #include <vector>
 #include <regex>
 #include <sstream>
+#include <cocos2d.h>
 
 using namespace std;
+
+USING_NS_CC;
 
 Tools* Tools::instance_ = nullptr;
 
@@ -75,6 +78,22 @@ int Tools::string2number(string str)
     }
     return 0;
 }
+
+float Tools::getHeigh()
+{
+    auto size = Director::getInstance()->getWinSize();
+    return size.height;
+}
+
+float Tools::getWidth()
+{
+    auto size = Director::getInstance()->getWinSize();
+    return size.width;
+}
+
+
+
+
 
 
 

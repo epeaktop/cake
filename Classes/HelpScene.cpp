@@ -10,6 +10,8 @@
 #include "PopupLayer.h"
 #include "UserData.h"
 
+#include "Tools.h"
+
 // #每个游戏都会不一样游戏场景头文件
 #include "InGameScene.h"
 
@@ -18,7 +20,10 @@
 
 using namespace cocos2d;
 using namespace CocosDenshion;
-
+const int BT_OK = 12345;
+const int NUMBER_LAYER = 5;
+const float NUMBER_POS_Y = -15.0f;
+const float NUMBER_POS_X = 15.0f;
 Scene *HelpScene::scene()
 {
     auto *scene = Scene::create();
@@ -31,6 +36,75 @@ Scene *HelpScene::scene()
     return scene;
 }
 
+void HelpScene::showSliver()
+{
+    if (sliver_ == nullptr)
+    {
+        sliver_ = Sprite::create("gui/icon_sliver.png");
+        addChild(sliver_, 5);
+    }
+    
+    Size size = Director::getInstance()->getWinSize();
+    sliver_->setPosition(size.width*0.9, size.height* 0.95);
+    
+    if (!sliverNumber_)
+    {
+        sliverNumber_ = Label::createWithCharMap("gui/white_font.png", 25, 29, '0');
+        sliver_->addChild(sliverNumber_);
+    }
+    
+    int i = UserData::getInstance()->getSliver();
+    sliverNumber_->setString(TI()->_itos(i));
+    sliverNumber_->setPosition(NUMBER_POS_X, NUMBER_POS_Y);
+}
+
+
+void HelpScene::showHp()
+{
+   if (hp_ == nullptr)
+    {
+        hp_ = Sprite::create("gui/icon_hp.png");
+        addChild(hp_, NUMBER_LAYER);
+    }
+    
+    hp_->setPosition(TI()->getWidth()*0.1, TI()->getHeigh()*0.95);
+    
+    if (hpNumber_ == nullptr)
+    {
+		hpNumber_ = Label::createWithCharMap("gui/white_font.png", 25, 29, '0');
+        hp_->addChild(hpNumber_);
+    }
+    
+    hpNumber_->setPosition(NUMBER_POS_X, NUMBER_POS_Y);
+    hpNumber_->setString(TI()->_itos(UserData::getInstance()->getHp()));
+
+}
+
+void HelpScene::showStar()
+{
+    if (star_ == nullptr)
+    {
+        star_ = Sprite::create("gui/icon_star.png");
+        addChild(star_, NUMBER_LAYER);
+    }
+    
+    star_->setPosition(TI()->getWidth()* 0.1, TI()->getHeigh()* 0.8);
+    if(starNumber_ == nullptr)
+    {
+        starNumber_ = Label::createWithCharMap("gui/white_font.png", 25, 29, '0');
+        star_->addChild(starNumber_);
+    }
+    
+    starNumber_->setPosition(NUMBER_POS_X,NUMBER_POS_Y);
+    starNumber_->setString(TI()->_itos(getStarNumbers()));
+}
+
+int HelpScene::getStarNumbers()
+{
+    return 0;
+}
+
+
 bool HelpScene::init()
 {
     if (!Layer::init())
@@ -38,6 +112,9 @@ bool HelpScene::init()
         return false;
     }
 
+    showSliver();
+    showHp();
+    
     TextureCache::getInstance()->removeUnusedTextures();
 
     this->setKeypadEnabled(true);
@@ -53,7 +130,7 @@ bool HelpScene::init()
   
     this->addChild(charMap,3);
     
-
+    
   
     helpLayer = Layer::create();
     helpLayer->setAnchorPoint(Vec2::ZERO);
@@ -113,12 +190,10 @@ bool HelpScene::init()
         
         item->setTag(i);
         itemArray.pushBack(item);
+        
         auto charMap = Label::createWithCharMap("gui/white_font.png", 25, 29, '0');
         charMap->setPosition(Vec2(60,90));
-        std::stringstream ss;
-        ss.str("");
-        ss << i;
-        charMap->setString(ss.str());
+        charMap->setString(TI()->_itos(i));
         
         
         if(sp!=nullptr)
@@ -178,7 +253,7 @@ void HelpScene::onExit()
     Layer::onExit();
 }
 
-const int BT_OK = 12345;
+
 
 void HelpScene::menuBackCallback(Ref *pSender)
 {
