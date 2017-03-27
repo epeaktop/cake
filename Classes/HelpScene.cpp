@@ -9,7 +9,7 @@
 #include "SimpleAudioEngine.h"
 #include "PopupLayer.h"
 #include "UserData.h"
-
+#include "Cover.h"
 #include "Tools.h"
 
 // #每个游戏都会不一样游戏场景头文件
@@ -42,8 +42,6 @@ void HelpScene::showSliver()
     {
         sliver_ = Sprite::create("gui/icon_sliver.png");
         addChild(sliver_, 5);
-        
-        
     }
     
     Size size = Director::getInstance()->getWinSize();
@@ -323,7 +321,12 @@ void HelpScene::buttonCallback(Node *pNode)
         Director::getInstance()->replaceScene(transition);
     }
 }
-
+bool HelpScene::touchQuit(Vec2 v)
+{
+	Vec2 v1(TI()->getWidth()* 0.9 - 100, TI()->getHeight()* 0.8 - 100);
+	Vec2 v2(TI()->getWidth()* 0.9 + 100, TI()->getHeight()* 0.8 + 100);
+	return TI()->isInScope(v, v1, v2);
+}
 bool HelpScene::onTouchBegan(CCTouch *touch, CCEvent *event)
 {
     CCPoint touchPoint = touch->getLocationInView();
@@ -331,6 +334,12 @@ bool HelpScene::onTouchBegan(CCTouch *touch, CCEvent *event)
     y_begin = touchPoint.y;
     y_batch_location_begin = helpLayer->getPosition().y;
     enableMove = false;
+
+	if (touchQuit(touchPoint))
+	{
+		Director::getInstance()->ReplaceScene(Cover::scene());
+	}
+
     return true;
 }
 

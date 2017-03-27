@@ -85,6 +85,19 @@ float Tools::getHeigh()
     return size.height;
 }
 
+bool Tools::isInScope(Vec2 v,Vec2 v1, Vec2 v2)
+{
+	if (v.x < v2.x && v.x > v1.x)
+	{
+		if (v.y > v1.y && v.y < v2.y)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 float Tools::getWidth()
 {
     auto size = Director::getInstance()->getWinSize();
