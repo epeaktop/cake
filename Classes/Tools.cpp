@@ -3,7 +3,7 @@
 #include <vector>
 #include <regex>
 #include <sstream>
-#include <cocos2d.h>
+
 
 using namespace std;
 

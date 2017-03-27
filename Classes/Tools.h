@@ -3,13 +3,15 @@
 #include <iostream>
 #include <vector>
 
+#include <cocos2d.h>
 using namespace std;
 
+USING_NS_CC;
 /**
  * @@ 自己定义的函数库,避免包含boost库,尽量用c++17,跨平台!!
  * @@ jiangxf @2016.12.15
  */
-class Vec2;
+
 class Tools
 {
 public:

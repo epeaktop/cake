@@ -323,8 +323,8 @@ void HelpScene::buttonCallback(Node *pNode)
 }
 bool HelpScene::touchQuit(Vec2 v)
 {
-	Vec2 v1(TI()->getWidth()* 0.9 - 100, TI()->getHeight()* 0.8 - 100);
-	Vec2 v2(TI()->getWidth()* 0.9 + 100, TI()->getHeight()* 0.8 + 100);
+	Vec2 v1(TI()->getWidth()* 0.9 - 100, TI()->getHeigh()* 0.8 - 100);
+	Vec2 v2(TI()->getWidth()* 0.9 + 100, TI()->getHeigh()* 0.8 + 100);
 	return TI()->isInScope(v, v1, v2);
 }
 bool HelpScene::onTouchBegan(CCTouch *touch, CCEvent *event)
@@ -337,7 +337,7 @@ bool HelpScene::onTouchBegan(CCTouch *touch, CCEvent *event)
 
 	if (touchQuit(touchPoint))
 	{
-		Director::getInstance()->ReplaceScene(Cover::scene());
+		Director::getInstance()->replaceScene(Cover::scene());
 	}
 
     return true;

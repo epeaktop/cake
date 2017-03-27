@@ -71,6 +71,7 @@ public:
     int getStarNumbers();
     
     void showQuit();
+    bool touchQuit(Vec2 v);
     
 };
 
