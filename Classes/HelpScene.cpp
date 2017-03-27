@@ -22,8 +22,8 @@ using namespace cocos2d;
 using namespace CocosDenshion;
 const int BT_OK = 12345;
 const int NUMBER_LAYER = 5;
-const float NUMBER_POS_Y = -15.0f;
-const float NUMBER_POS_X = 15.0f;
+const float NUMBER_POS_Y = -20.0f;
+const float NUMBER_POS_X = 35.0f;
 Scene *HelpScene::scene()
 {
     auto *scene = Scene::create();
@@ -42,6 +42,8 @@ void HelpScene::showSliver()
     {
         sliver_ = Sprite::create("gui/icon_sliver.png");
         addChild(sliver_, 5);
+        
+        
     }
     
     Size size = Director::getInstance()->getWinSize();
@@ -51,6 +53,9 @@ void HelpScene::showSliver()
     {
         sliverNumber_ = Label::createWithCharMap("gui/white_font.png", 25, 29, '0');
         sliver_->addChild(sliverNumber_);
+        auto paopao = Sprite::create("gui/font_line.png");
+        paopao->setPosition(sliver_->getPosition()-Vec2(0, 57));
+        addChild(paopao, 4);
     }
     
     int i = UserData::getInstance()->getSliver();
@@ -71,13 +76,36 @@ void HelpScene::showHp()
     
     if (hpNumber_ == nullptr)
     {
-		hpNumber_ = Label::createWithCharMap("gui/white_font.png", 25, 29, '0');
+		hpNumber_ = Label::createWithSystemFont("", "Arial", 29);
         hp_->addChild(hpNumber_);
+        auto paopao = Sprite::create("gui/font_line.png");
+        paopao->setPosition(hp_->getPosition()-Vec2(0, 57));
+        addChild(paopao, 4);
+    }
+    auto t = time(nullptr) -  UserData::getInstance()->getLastTime() ;
+    int m = t/1800;
+
+    UserData::getInstance()->addHp(m);
+    if (UserData::getInstance()->getHp() > 6)
+    {
+        UserData::getInstance()->setHp(6);
     }
     
     hpNumber_->setPosition(NUMBER_POS_X, NUMBER_POS_Y);
-    hpNumber_->setString(TI()->_itos(UserData::getInstance()->getHp()));
+    hpNumber_->setString(TI()->_itos(UserData::getInstance()->getHp())+"/6");
+    hpNumber_->enableOutline(ccc4(255,0,0,255));
+    hpNumber_->enableBold();
+    hpNumber_->enableShadow();
+}
 
+void HelpScene::showQuit()
+{
+    if (quit_ == nullptr)
+    {
+        quit_ = Sprite::create("gui/icon_quit.png");
+        addChild(quit_, NUMBER_LAYER);
+    }
+	quit_->setPosition(TI()->getWidth()* 0.9, TI()->getHeigh()* 0.8);
 }
 
 void HelpScene::showStar()
@@ -93,6 +121,9 @@ void HelpScene::showStar()
     {
         starNumber_ = Label::createWithCharMap("gui/white_font.png", 25, 29, '0');
         star_->addChild(starNumber_);
+        auto paopao = Sprite::create("gui/font_line.png");
+        paopao->setPosition(star_->getPosition()-Vec2(0, 57));
+        addChild(paopao, 4);
     }
     
     starNumber_->setPosition(NUMBER_POS_X,NUMBER_POS_Y);
@@ -101,7 +132,7 @@ void HelpScene::showStar()
 
 int HelpScene::getStarNumbers()
 {
-    return 0;
+    return starNum_;
 }
 
 
@@ -114,6 +145,7 @@ bool HelpScene::init()
 
     showSliver();
     showHp();
+    showQuit();
     
     TextureCache::getInstance()->removeUnusedTextures();
 
@@ -167,16 +199,19 @@ bool HelpScene::init()
             else
             {
                 int score = UserData::getInstance()->getScore(i);
-                if (score < 1000)
+                if (score < 10000&& i > 5)
                 {
+                    starNum_ += 1;
                     sp = Sprite::create("popup_star_bg1.png");
                 }
-                else if(score >= 1000 && score < 3000)
+                else if(score >= 10000 && score < 30000 && i > 5)
                 {
+                     starNum_ += 2;
                     sp = Sprite::create("popup_star_bg2.png");
                 }
                 else
                 {
+                     starNum_ += 3;
                     sp = Sprite::create("popup_star_bg3.png");
                 }
             }
@@ -244,7 +279,7 @@ bool HelpScene::init()
     listener->onTouchEnded = CC_CALLBACK_2(HelpScene::onTouchEnded, this);
 
     _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
-
+    showStar();
     return true;
 }
 

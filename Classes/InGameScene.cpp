@@ -98,7 +98,11 @@ InGameScene::~InGameScene()
     //CC_SAFE_RELEASE_NULL(m_lineObjs);
 }
 
-
+void InGameScene::dealHp()
+{
+    UserData::getInstance()->addHp(-1);
+    UserData::getInstance()->setLastTime(time(nullptr));
+}
 //#INIT
 bool InGameScene::init()
 {
@@ -251,6 +255,7 @@ bool InGameScene::init()
     while (0);
 
     log("<< moves_number_(%d)", moves_number_);
+    dealHp();
     return bRet;
 }
 
@@ -1098,8 +1103,11 @@ void InGameScene::showWin()
     UserData::getInstance()->setScore(m_nScore);
 
     UserData::getInstance()->setScore(InGameScene::level, m_nScore);
-
+    UserData::getInstance()->addSliver(3);
+    UserData::getInstance()->addHp(1);
+    
     GameResult *pl = GameResult::create("game_start.png");
+    
     pl->setContentSize(Size(720, 1280));
     pl->setTitle("", 30);
     pl->setContentText("", 33, 80, 150);
@@ -1113,6 +1121,7 @@ void InGameScene::showWin()
     {
         UserData::getInstance()->addLevel(1);
     }
+    
 
 }
 

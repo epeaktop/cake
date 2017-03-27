@@ -32,6 +32,8 @@ public:
     CC_SYNTHESIZE_ADD(int, _hp, Hp);  // 体力
     CC_SYNTHESIZE_ADD(int, _star, Star);  //获得星星的总数量
     
+    CC_SYNTHESIZE_ADD(int, _lasttime, LastTime);  //获得星星的总数量
+    
     
 	CC_SYNTHESIZE_ADD(int, _rebirth, Rebirth); //复活药
 	CC_SYNTHESIZE_ADD(int, _bestScore, BestScore);

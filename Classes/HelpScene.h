@@ -38,11 +38,13 @@ private:
     
     Sprite* hp_ = nullptr;
     Sprite* star_ = nullptr;
+    Sprite* quit_ = nullptr;
     
     
     Label* hpNumber_ = nullptr;
     Label* starNumber_ = nullptr;
     
+    int starNum_ = 0;
     
 public:
 
@@ -67,6 +69,8 @@ public:
     void showStar();
     
     int getStarNumbers();
+    
+    void showQuit();
     
 };
 

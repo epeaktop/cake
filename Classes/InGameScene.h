@@ -72,7 +72,7 @@ private:
 	void addRemovedDiamondCallback(Node *pSender);
     
     int getDiamondType();
-    
+    void dealHp();
     void DrawLine();
     Vec2 getPositionByRowAndLine(int row, int line);
 

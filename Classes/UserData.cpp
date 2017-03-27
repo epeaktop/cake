@@ -42,6 +42,8 @@ bool UserData::init()
     _rebirth = UserDefault::getInstance()->getIntegerForKey("Rebirth", 0);
 	_level = UserDefault::getInstance()->getIntegerForKey("level", 1);
     _moveItemNum = UserDefault::getInstance()->getIntegerForKey("_moveItemNum", 0);
+    _sliver = UserDefault::getInstance()->getIntegerForKey("sliver", 0);
+    _lasttime = UserDefault::getInstance()->getIntegerForKey("lasttime", 0);
 	return true;
 }
 
@@ -70,6 +72,8 @@ void UserData::saveData()
 	UserDefault::getInstance()->setIntegerForKey("Rebirth", _rebirth);
     UserDefault::getInstance()->setIntegerForKey("level", _level);
     UserDefault::getInstance()->setIntegerForKey("_moveItemNum", _moveItemNum);
+    UserDefault::getInstance()->setIntegerForKey("sliver", _sliver);
+    UserDefault::getInstance()->setIntegerForKey("lasttime", _lasttime);
 	UserDefault::getInstance()->flush();
 }
 void UserData::addScore(int var)
