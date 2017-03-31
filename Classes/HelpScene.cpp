@@ -300,7 +300,7 @@ void HelpScene::menuBackCallback(Ref *pSender)
     pl->setContentText("", 33, 80, 150);
     pl->setCallbackFunc(this, callfuncN_selector(HelpScene::buttonCallback));
     pl->level_ = level;
-    pl->addButton("start_bt.png", "start_bt.png", Vec2(720/2, 450), BT_OK);
+    pl->addButton("start_bt.png", "start_bt.png", Vec2(720/2, 300), BT_OK);
     UserData::getInstance()->setSelLevel(level);
     this->addChild(pl, 2000);
     

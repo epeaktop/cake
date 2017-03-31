@@ -34,6 +34,7 @@ bool UserData::init()
         _haveRaffle = false;
         UserDefault::getInstance()->setIntegerForKey("Time", GetTime());
     }
+    
     _bomb = UserDefault::getInstance()->getIntegerForKey("Bomb", 0);
     _colorBubble = UserDefault::getInstance()->getIntegerForKey("ColorBubble", 0);
     _hourglass = UserDefault::getInstance()->getIntegerForKey("Hourglass", 0);
@@ -44,6 +45,9 @@ bool UserData::init()
     _moveItemNum = UserDefault::getInstance()->getIntegerForKey("_moveItemNum", 0);
     _sliver = UserDefault::getInstance()->getIntegerForKey("sliver", 0);
     _lasttime = UserDefault::getInstance()->getIntegerForKey("lasttime", 0);
+    
+    _refreshNum = UserDefault::getInstance()->getIntegerForKey("refreshNum",0);
+    _colorNum = UserDefault::getInstance()->getIntegerForKey("colorItemNum",0 );
 	return true;
 }
 
@@ -59,7 +63,9 @@ void UserData::reset()
 	_raffle = true;
 	_haveRaffle = false;
     _moveItemNum = 0;
+
 }
+
 void UserData::saveData()
 {
 	UserDefault::getInstance()->setBoolForKey("Beginner", _isBeginner);
@@ -72,10 +78,16 @@ void UserData::saveData()
 	UserDefault::getInstance()->setIntegerForKey("Rebirth", _rebirth);
     UserDefault::getInstance()->setIntegerForKey("level", _level);
     UserDefault::getInstance()->setIntegerForKey("_moveItemNum", _moveItemNum);
+    
     UserDefault::getInstance()->setIntegerForKey("sliver", _sliver);
     UserDefault::getInstance()->setIntegerForKey("lasttime", _lasttime);
-	UserDefault::getInstance()->flush();
+    UserDefault::getInstance()->setIntegerForKey("colorItemNum", _colorNum);
+    UserDefault::getInstance()->setIntegerForKey("refreshNum", _refreshNum);
+    
+    UserDefault::getInstance()->flush();
+    
 }
+
 void UserData::addScore(int var)
 {
 	setScore(getScore() + var);
@@ -85,6 +97,7 @@ void UserData::addScore(int var)
 	}
 	saveData();
 }
+
 int GetTime()
 {
 	time_t timep;

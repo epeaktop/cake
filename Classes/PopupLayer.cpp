@@ -3,7 +3,7 @@
 #include "PopupLayer.h"
 #include "UserData.h"
 #define TTF_FONT_NAME  "FZDHTJW.TTF"
-
+#include "NDKHelper.h"
 
 PopupLayer::PopupLayer():
     m__pMenu(NULL)
@@ -33,6 +33,33 @@ const int CLOSE_TAG = 10240;
 const int GIFT1_TAG = 10241;
 const int GIFT2_TAG = 10242;
 
+const int RESH_BTN  = 10243;
+const int ADD_BTN   = 10244;
+const int CLR_BTN   = 10245;
+
+const int RESH_PRICE = 13;
+const int ADD_PRICE = 30;
+const int CLR_PRICE = 6;
+
+const float item1_pos_x = 214;
+const float item2_pos_x = 314;
+const float item3_pos_x = 414;
+
+const float item1_pos_y = 500;
+const float item2_pos_y = 500;
+const float item3_pos_y = 500;
+
+
+
+void PopupLayer::createButton(const char * name, const int tag , float x, float y)
+{
+    auto refresh_button = MenuItemImage::create(name, name);
+    refresh_button->setPosition(x, y);
+    refresh_button->setCallback(CC_CALLBACK_1(PopupLayer::buttonCallback,this));
+    refresh_button->setTag(tag);
+    getMenuButton()->addChild(refresh_button);
+
+}
 bool PopupLayer::init()
 {
     bool bRef = false;
@@ -80,14 +107,41 @@ bool PopupLayer::init()
         getMenuButton()->addChild(b);
         getMenuButton()->addChild(c);
         bRef = true;
+        
+        createButton("refresh_button.png",RESH_BTN, 214, 1280 - 778);
+        createButton("add_button.png", ADD_BTN, 314, 1280 - 778);
+        createButton("add_button.png", CLR_BTN, 414, 1280 - 778);
+
     }
     while (0);
+    
+    registEvent();
     return bRef;
 }
 
+void PopupLayer::registEvent()
+{
+    auto listener = EventListenerTouchOneByOne::create();
+    listener->setSwallowTouches(true); // 不向下传递
+    
+    listener->onTouchBegan = CC_CALLBACK_2(PopupLayer::onTouchBegan, this);
+    listener->onTouchEnded = CC_CALLBACK_2(PopupLayer::onTouchEnded, this);
+    listener->onTouchMoved = CC_CALLBACK_2(PopupLayer::onTouchMoved, this);
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+}
+bool PopupLayer::onTouchBegan(Touch *pTouch, Event *pEvent)
+{
+    return true;
+}
+void PopupLayer::onTouchMoved(Touch *pTouch, Event *pEvent)
+{
 
+}
 
-
+void PopupLayer::onTouchEnded(Touch *pTouch, Event *pEvent)
+{
+    
+}
 bool PopupLayer::TouchBegan(cocos2d::Touch *pTouch, cocos2d::Event *pEvent)
 {
     log("PopupLayer touch");
@@ -187,11 +241,107 @@ bool PopupLayer::addButton(const char *normalImage, const char *selectedImage, V
     addChild(charMap,100);
     return true;
 }
-#include "NDKHelper.h"
+
+
+
+int PopupLayer::getPrice(int itemId)
+{
+    switch (itemId)
+    {
+        case ADD_BTN:
+            return ADD_PRICE;
+        case RESH_BTN:
+            return RESH_PRICE;
+        case CLR_BTN:
+            return CLR_PRICE;
+        default:
+            break;
+    }
+    return 100;
+}
+
+int PopupLayer::getMoney()
+{
+    return UserData::getInstance()->getSliver();
+}
+
+bool PopupLayer::subMoney(int a)
+{
+    if (a <= 0)
+    {
+        return false;
+    }
+    
+    UserData::getInstance()->addSliver(-a);
+    return true;
+}
+
+void PopupLayer::addItem(int itemId)
+{
+    switch (itemId)
+    {
+        case ADD_BTN:
+            UserData::getInstance()->addMoveItemNum(1);
+            break;
+        case RESH_BTN:
+            UserData::getInstance()->addRefreshItemNum(1);
+            break;
+        case CLR_BTN:
+            UserData::getInstance()->addColorItemNum(1);
+        default:
+            break;
+    }
+}
+
+
+
+void PopupLayer::showGotItemAnim(int itemId)
+{
+    
+    Vec2 pos;
+    switch (itemId)
+    {
+        case ADD_BTN:
+            pos = Vec2(item2_pos_x,item2_pos_y);
+            break;
+        case RESH_BTN:
+            pos = Vec2(item1_pos_x,item1_pos_y);
+            break;
+        case CLR_BTN:
+            pos = Vec2(item3_pos_x, item3_pos_y);
+            break;
+        default:
+            break;
+    }
+    auto sp = Sprite::create("fit.png");
+    sp->setPosition(pos);
+    addChild(sp, 100);
+    auto fi = FadeIn::create(0.5f);
+    sp->runAction(fi);
+}
+
+void PopupLayer::buyItem(int itemId)
+{
+    auto price = getPrice(itemId);
+    if (getMoney() < price)
+    {
+        return;
+    }
+   
+    if(subMoney(price) == false )
+    {
+        return;
+    }
+    
+    addItem(itemId);
+    
+    showGotItemAnim(itemId);
+}
+
 void PopupLayer::buttonCallback(cocos2d::Ref *pSender)
 {
     Node* node = dynamic_cast<Node*>(pSender);
-    log("touch tag: %d", node->getTag());
+    
     if (GIFT1_TAG == node->getTag() || GIFT2_TAG == node->getTag())
     {
         callJava("showAds","");
@@ -200,14 +350,32 @@ void PopupLayer::buttonCallback(cocos2d::Ref *pSender)
         return;
     }
     
+    if (RESH_BTN == node->getTag())
+    {
+        buyItem(RESH_BTN);
+        return;
+    }
+    
+    if (ADD_BTN == node->getTag())
+    {
+        buyItem(ADD_BTN);
+        return;
+    }
+    
+    if (CLR_BTN == node->getTag())
+    {
+        buyItem(CLR_BTN);
+        return;
+    }
+    
     if (m_callback && m_callbackListener)
     {
         node->setUserData((void*)&level_);
         (m_callbackListener->*m_callback)(node);
     }
+    
     removeFromParentAndCleanup(true);
 }
-
 
 
 void PopupLayer::onEnter()

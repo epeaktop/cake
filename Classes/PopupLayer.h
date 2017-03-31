@@ -33,7 +33,21 @@ public:
     void showOpenBoxAnimi(int flag);
     
     int level_;
+    void registEvent();
+    virtual bool onTouchBegan(Touch *pTouch, Event *pEvent);
+    virtual void onTouchMoved(Touch *pTouch, Event *pEvent);
+    virtual void onTouchEnded(Touch *pTouch, Event *pEvent);
     
+    /**
+     * @ 根据规则创建按钮
+     */
+    void createButton(const char* name, const int tag, float x, float y);
+    void buyItem(int itemId);
+    int getPrice(int itemId);
+    int getMoney();
+    bool subMoney(int price);
+    void addItem(int itemId);
+    void showGotItemAnim(int itemId);
 
 private:
 
