@@ -29,6 +29,15 @@ struct ViewData
     string name2;
     string name3;
 };
+
+
+
+struct obsData
+{
+    int i;
+    int j;
+    int type;
+};
 /**
  * 收集鸡蛋过关
  */
@@ -50,8 +59,8 @@ public:
     int isWin(int level, int score);
     
     ViewData getViewData(int level);
-    
-    
+    string getObstacle(int level);
+    vector<obsData> getObs(int level);
 private:
     static GameData* instance_;
 

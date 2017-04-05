@@ -110,7 +110,7 @@ bool PopupLayer::init()
         
         createButton("refresh_button.png",RESH_BTN, 214, 1280 - 778);
         createButton("add_button.png", ADD_BTN, 314, 1280 - 778);
-        createButton("add_button.png", CLR_BTN, 414, 1280 - 778);
+        createButton("color_button.png", CLR_BTN, 414, 1280 - 778);
 
     }
     while (0);
@@ -302,13 +302,13 @@ void PopupLayer::showGotItemAnim(int itemId)
     switch (itemId)
     {
         case ADD_BTN:
-            pos = Vec2(item2_pos_x,item2_pos_y);
+            pos = Vec2(item2_pos_x,item2_pos_y) - Vec2(0, 50);
             break;
         case RESH_BTN:
-            pos = Vec2(item1_pos_x,item1_pos_y);
+            pos = Vec2(item1_pos_x,item1_pos_y) - Vec2(0, 50);
             break;
         case CLR_BTN:
-            pos = Vec2(item3_pos_x, item3_pos_y);
+            pos = Vec2(item3_pos_x, item3_pos_y) - Vec2(0, 50);
             break;
         default:
             break;

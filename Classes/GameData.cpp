@@ -367,6 +367,62 @@ string viewConfig[] =
     
 
 };
+
+string obstacleConfigure[] =
+{
+    "6:3,3,1 3,2,1 3,4,1",
+    "7:3,3,1 3,2,1 3,4,1",
+    "8:3,3,1 3,2,1 3,4,1 2,3,1",
+};
+
+
+string GameData::getObstacle(int level)
+{
+    stringstream _ss;
+    _ss.str("");
+    _ss << level << ":";
+    int sz = sizeof(obstacleConfigure)/sizeof(obstacleConfigure[0]);
+    for(int i = 0; i < sz; i++)
+    {
+        if (strstr(obstacleConfigure[i].c_str(),_ss.str().c_str()))
+        {
+            
+            vector<string> ret = TI()->split(obstacleConfigure[i],':');
+            CCASSERT(ret.size() == 2, "obstacle configure error");
+            return ret[1];
+        }
+    }
+    
+    return "";
+}
+
+
+vector<obsData> GameData::getObs(int level)
+{
+	
+    vector<obsData> ret;
+    string conStr = getObstacle(level);
+    if (conStr == "")
+    {
+        return ret;
+    }
+    
+    vector<string> ss = TI()->split(conStr, ' ');
+    for(auto item : ss)
+    {
+        vector<string> data = TI()->split(item,',');
+        CCASSERT(data.size() == 3, "obstacle config error");
+        obsData obs;
+        obs.i = TI()->_stoi(data[0]);
+        obs.j = TI()->_stoi(data[1]);
+        obs.type = TI()->_stoi(data[2]);
+        ret.push_back(obs);
+    }
+    return ret;
+}
+
+
+
 int GameData::isWin(int level)
 {
     if (level < 1 || level > MAX_LEVEL)

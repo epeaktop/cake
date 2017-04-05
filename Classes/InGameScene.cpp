@@ -15,7 +15,8 @@
 #include "NDKHelper.h"
 #include "FailLayer.h"
 #include <time.h>
-
+#define PAN 0.000001
+#define BOMB_MESSAGE 100001
 
 using namespace std;
 
@@ -609,7 +610,7 @@ void InGameScene::drawBg()
     }
 }
 
-#define PAN 0.000001
+
 void InGameScene::DrawLine()
 {
 
@@ -1029,7 +1030,7 @@ void InGameScene::bombPos(int line, int row)
     m_pRemovedDiamond->addObject(m_pDiamond[line][row]);
 
 }
-#define BOMB_MESSAGE 100001
+
 
 void InGameScene::bombAllBombs()
 {
