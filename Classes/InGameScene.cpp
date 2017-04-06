@@ -532,27 +532,53 @@ string InGameScene::getImageName(int type)
 
     return ret;
 }
+
+int InGameScene::isObstacle(int i, int j)
+{
+    int ret = 0;
+    vector<obsData> data = GameData::getInstance()->getObs(InGameScene::level);
+    for(obsData _data : data)
+    {
+        if(_data.i == i && _data.j == j)
+        {
+		    return _data.type;
+        }
+    }
+    
+    return ret;
+
+}
+
+
+
 void InGameScene::addDiamond(float delta)
 {
-
-   
     while (true)
     {
-        int diamondType = rand() % getDiamondType();
+        int ret = 0;
+        if( (ret = isObstacle(m_nDiamondLine,m_nDiamondRow)) > 0 )
+        {
+            auto sp = Sprite::create("zhuan.png");
+            addChild(sp, 10000);
+            m_pDiamond[m_nDiamondLine][m_nDiamondRow] = nullptr;
+        }
+        else
+        {
+			int diamondType = rand() % getDiamondType();
 
-        Diamond *pDiamond = Diamond::createWithSpriteFrameName(Diamond::TypeStr[diamondType]);
-        pDiamond->setType(diamondType);
+			Diamond *pDiamond = Diamond::createWithSpriteFrameName(Diamond::TypeStr[diamondType]);
+			pDiamond->setType(diamondType);
 
+			pDiamond->setPosition(Vec2(CELL_WIDTH * m_nDiamondRow + 50, 1280 + CELL_HEIGHT));
+			pDiamond->setScale(0.9);
+			m_pDiamondBatchNode->addChild(pDiamond);
 
-        pDiamond->setPosition(Vec2(CELL_WIDTH * m_nDiamondRow + 50, 1280 + CELL_HEIGHT));
-        pDiamond->setScale(0.9);
-        m_pDiamondBatchNode->addChild(pDiamond);
+			auto pos = Vec2(CELL_WIDTH * m_nDiamondRow + OFFSET_X, CELL_HEIGHT * m_nDiamondLine + OFFSET_Y);
+			pDiamond->setPosition(pos);
+			m_pDiamond[m_nDiamondLine][m_nDiamondRow] = pDiamond;
+		}
 
-        auto pos = Vec2(CELL_WIDTH * m_nDiamondRow + OFFSET_X, CELL_HEIGHT * m_nDiamondLine + OFFSET_Y);
-        pDiamond->setPosition(pos);
-        m_pDiamond[m_nDiamondLine][m_nDiamondRow] = pDiamond;
-
-        if (++m_nDiamondRow == m_nDiamondRowMax)
+		if (++m_nDiamondRow == m_nDiamondRowMax)
         {
             m_nDiamondRow = 0;
             ++m_nDiamondLine;

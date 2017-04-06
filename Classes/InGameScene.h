@@ -37,6 +37,7 @@ public:
     virtual void onTouchMoved(Touch *pTouch, Event *pEvent);
     virtual void onTouchEnded(Touch *pTouch, Event *pEvent);
     HEARTBEAT(InGameScene, showWinHeartbeat)
+    int isObstacle(int i, int j);
     
 private:
 	virtual void update(float delta);
