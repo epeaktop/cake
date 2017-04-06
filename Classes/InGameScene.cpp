@@ -903,8 +903,6 @@ void InGameScene::onTouchMoved(Touch *pTouch, Event *pEvent)
 bool InGameScene::onTouchBegan(Touch *pTouch, Event *pEvent)
 {
     log("[onTouchBegan] begin ~");
-    log("<<< moves_number_(%d)", moves_number_);
-
     if (! m_bIsReadyGoEnd)
     {
         log("[onTouchBegan] m_bIsReadyGoEnd is false !");
@@ -936,7 +934,6 @@ bool InGameScene::onTouchBegan(Touch *pTouch, Event *pEvent)
         }
     }
 
-    log("a-end");
     return true;
 }
 void InGameScene::showMoveNumber()
@@ -1326,7 +1323,7 @@ void InGameScene::removeSelectedDiamond()
 
         int line = tag / m_nDiamondRowMax, row = tag % m_nDiamondRowMax;
 
-        if (m_pDiamond[line][row] == NULL)
+        if (m_pDiamond[line][row] ==  nullptr)
         {
             continue;
         }
@@ -1356,13 +1353,23 @@ void InGameScene::addRemovedDiamond(float delta)
         {
             if (m_pDiamond[toLine][toRow] == NULL) //被删除掉的宝石的位置，即要掉落的目的地
             {
+                
+                if (isObstacle(toLine, toRow))
+                {
+                    continue;
+                }
+                
                 int fromLine;
-
+				
                 for (fromLine = toLine + 1; fromLine < m_nDiamondLineMax; ++fromLine)
                 {
                     //被删除宝石的上方第一个存在，并处于固定状态，即没有在移动中的宝石
                     if (m_pDiamond[fromLine][toRow])
                     {
+                        if (isObstacle(fromLine, toRow))
+                        {
+                            continue;
+                        }
                         //播放宝石被添加时掉落的效果
                         if (m_pDiamond[fromLine][toRow]->getMoving())
                         {
