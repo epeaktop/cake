@@ -560,6 +560,9 @@ void InGameScene::addDiamond(float delta)
         {
             auto sp = Sprite::create("zhuan.png");
             addChild(sp, 10000);
+            
+            auto pos = Vec2(CELL_WIDTH * m_nDiamondRow + OFFSET_X, CELL_HEIGHT * m_nDiamondLine + OFFSET_Y);
+            sp->setPosition(pos);
             m_pDiamond[m_nDiamondLine][m_nDiamondRow] = nullptr;
         }
         else
