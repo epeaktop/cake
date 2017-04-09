@@ -370,11 +370,38 @@ string viewConfig[] =
 
 string obstacleConfigure[] =
 {
-    "6:3,3,1 3,2,1 3,4,1",
+    "6:3,3,1 3,2,1 3,4,1 3,5,1 3,6,1 4,3,1 4,2,1 4,4,1, 4,5,1 4,6,1",
     "7:3,3,1 3,2,1 3,4,1",
     "8:3,3,1 3,2,1 3,4,1 2,3,1",
 };
 
+
+string addConf[] =
+{
+    "9:3,3,1,1 3,2,1,1",
+    "10:3,3,1,1 3,2,1,1 3,4,1,1",
+    "11:3,3,1,1 3,2,1,1 3,4,1,1 2,3,1,1",
+};
+
+string GameData::getAddi(int level)
+{
+    stringstream _ss;
+    _ss.str("");
+    _ss << level << ":";
+    int sz = sizeof(addConf)/sizeof(addConf[0]);
+    for(int i = 0; i < sz; i++)
+    {
+        if (strstr(addConf[i].c_str(),_ss.str().c_str()))
+        {
+            vector<string> ret = TI()->split(addConf[i],':');
+            CCASSERT(ret.size() == 2, "obstacle configure error");
+            return ret[1];
+        }
+    }
+    
+    return "";
+
+}
 
 string GameData::getObstacle(int level)
 {
@@ -386,7 +413,6 @@ string GameData::getObstacle(int level)
     {
         if (strstr(obstacleConfigure[i].c_str(),_ss.str().c_str()))
         {
-            
             vector<string> ret = TI()->split(obstacleConfigure[i],':');
             CCASSERT(ret.size() == 2, "obstacle configure error");
             return ret[1];
@@ -394,6 +420,30 @@ string GameData::getObstacle(int level)
     }
     
     return "";
+}
+
+vector<AdditionData> GameData::getAddition(int level)
+{
+    vector<AdditionData> ret;
+    string conStr = getAddi(level);
+    if (conStr == "")
+    {
+        return ret;
+    }
+    
+    vector<string> ss = TI()->split(conStr, ' ');
+    for(auto item : ss)
+    {
+        vector<string> data = TI()->split(item,',');
+        CCASSERT(data.size() == 4, "addition config error !");
+        AdditionData obs;
+        obs.i = TI()->_stoi(data[0]);
+        obs.j = TI()->_stoi(data[1]);
+        obs.type = TI()->_stoi(data[2]);
+        obs.hp = TI()->_stoi(data[3]);
+        ret.push_back(obs);
+    }
+    return ret;
 }
 
 

@@ -37,13 +37,13 @@ const int RESH_BTN  = 10243;
 const int ADD_BTN   = 10244;
 const int CLR_BTN   = 10245;
 
-const int RESH_PRICE = 13;
+const int RESH_PRICE = 15;
 const int ADD_PRICE = 30;
-const int CLR_PRICE = 6;
+const int CLR_PRICE = 10;
 
-const float item1_pos_x = 214;
-const float item2_pos_x = 314;
-const float item3_pos_x = 414;
+const float item1_pos_x = 200;
+const float item2_pos_x = 350;
+const float item3_pos_x = 500;
 
 const float item1_pos_y = 500;
 const float item2_pos_y = 500;
@@ -66,7 +66,7 @@ bool PopupLayer::init()
     do
     {
         CC_BREAK_IF(!Layer::init());
-        this->setContentSize(Size::ZERO);
+        setContentSize(Size(720, 1280));
         // 初始化需要的 Menu
         Menu* menu = Menu::create();
         menu->setPosition(Vec2::ZERO);
@@ -108,9 +108,12 @@ bool PopupLayer::init()
         getMenuButton()->addChild(c);
         bRef = true;
         
-        createButton("refresh_button.png",RESH_BTN, 214, 1280 - 778);
-        createButton("add_button.png", ADD_BTN, 314, 1280 - 778);
-        createButton("color_button.png", CLR_BTN, 414, 1280 - 778);
+        createButton("refresh_button.png",RESH_BTN, item1_pos_x, item1_pos_y);
+        createButton("add_button.png", ADD_BTN, item2_pos_x, item1_pos_y);
+        createButton("color_button.png", CLR_BTN, item3_pos_x, item1_pos_y);
+        auto pri = Sprite::create("price.png");
+        pri->setPosition(354,1280 - 854);
+        addChild(pri,100);
 
     }
     while (0);
@@ -287,7 +290,7 @@ void PopupLayer::addItem(int itemId)
             UserData::getInstance()->addRefreshItemNum(1);
             break;
         case CLR_BTN:
-            UserData::getInstance()->addColorItemNum(1);
+            UserData::getInstance()->addcolorItemNum(1);
         default:
             break;
     }
@@ -410,8 +413,11 @@ void PopupLayer::onEnter()
     // 显示对话框标题
     if (getLabelTitle())
     {
-        getLabelTitle()->setPosition(Vec2(pCenter) + Vec2(0, contentSize.height / 2 - 35.0f));
-        this->addChild(getLabelTitle());
+        getLabelTitle()->setPosition(Vec2(pCenter) + Vec2(0, contentSize.height / 2 -300));
+        getLabelTitle()->setColor(Color3B(255,10,10));
+        getLabelTitle()->enableOutline(Color4B(0,0,0,255), 1);
+        
+        addChild(getLabelTitle());
     }
 
     // 显示文本内容

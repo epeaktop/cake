@@ -38,6 +38,15 @@ struct obsData
     int j;
     int type;
 };
+
+struct AdditionData
+{
+    int i;
+    int j;
+    int type;
+    int hp;
+};
+
 /**
  * 收集鸡蛋过关
  */
@@ -61,6 +70,9 @@ public:
     ViewData getViewData(int level);
     string getObstacle(int level);
     vector<obsData> getObs(int level);
+    string getAddi(int level);
+    vector<AdditionData> getAddition(int level);
+
 private:
     static GameData* instance_;
 

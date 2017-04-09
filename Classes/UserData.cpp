@@ -48,6 +48,10 @@ bool UserData::init()
     
     _refreshNum = UserDefault::getInstance()->getIntegerForKey("refreshNum",0);
     _colorNum = UserDefault::getInstance()->getIntegerForKey("colorItemNum",0 );
+    _hp = UserDefault::getInstance()->getIntegerForKey("hp", 0);
+    _bombNum = UserDefault::getInstance()->getIntegerForKey("bombNum", 0);
+    _digNum = UserDefault::getInstance()->getIntegerForKey("digNum", 0);
+    
 	return true;
 }
 
@@ -83,7 +87,9 @@ void UserData::saveData()
     UserDefault::getInstance()->setIntegerForKey("lasttime", _lasttime);
     UserDefault::getInstance()->setIntegerForKey("colorItemNum", _colorNum);
     UserDefault::getInstance()->setIntegerForKey("refreshNum", _refreshNum);
-    
+    UserDefault::getInstance()->setIntegerForKey("hp", _hp);
+    UserDefault::getInstance()->setIntegerForKey("bombNum", _bombNum);
+    UserDefault::getInstance()->setIntegerForKey("digNum", _digNum);
     UserDefault::getInstance()->flush();
     
 }

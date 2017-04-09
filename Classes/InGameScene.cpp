@@ -101,9 +101,19 @@ InGameScene::~InGameScene()
 
 void InGameScene::dealHp()
 {
-    UserData::getInstance()->addHp(-1);
-    UserData::getInstance()->setLastTime(time(nullptr));
+    if (USER()->getHp() > 0)
+    {
+        USER()->addHp(-1);
+    }
+    
+    if (USER()->getHp() < 1 )
+    {
+        USER()->setLastTime(time(nullptr));
+    }
+   
 }
+
+
 //#INIT
 bool InGameScene::init()
 {
@@ -170,52 +180,24 @@ bool InGameScene::init()
         auto *pPauseItem = MenuItemImage::create("gui/game_stop.png", "gui/game_stop.png", this, menu_selector(InGameScene::menuPauseCallback));
         pPauseItem->setPosition(Vec2(46, 1280 - 142));
 
-        auto moveItem = MenuItemImage::create("gui/item_move.png", "gui/item_move.png",
-                                              [this](Ref * ojb)->void
-        {
-            if (UserData::getInstance()->getMoveItemNum() <= 0)
-            {
-                return;
-            }
-
-            moves_number_ += 5;
-            showMoveNumber();
-            UserData::getInstance()->addMoveItemNum(-1);
-            moveItemNum_->setString(TI()->_itos(UserData::getInstance()->getMoveItemNum()));
-
-        });
-
-        auto refreshItem = MenuItemImage::create("gui/fresh_item.png", "gui/fresh_item.png",
-                           [this](Ref * obj)->void
-        {
-            if (UserData::getInstance()->getRefreshItemNum() <= 0 && 0)
-            {
-                return;
-            }
-            if (!m_bIsReadyGoEnd)
-            {
-                return;
-            }
-
-            doRefresh();
-            UserData::getInstance()->addRefreshItemNum(-1);
-            refreshItemNum_->setString(TI()->_itos(UserData::getInstance()->getRefreshItemNum()));
-        });
-
         refreshItemNum_ = Label::createWithCharMap("gui/white_font.png", 25, 29, '0');
 
-        refreshItem->setPosition(220, 1280 - 142);
-        refreshItem->addChild(refreshItemNum_);
         refreshItemNum_->setString(TI()->_itos(UserData::getInstance()->getRefreshItemNum()));
-        refreshItemNum_->setPosition(50, 10);
-
-        moveItem->setPosition(146, 1280 - 142);
+        refreshItemNum_->setPosition(89, 1280-1213);
+        refreshItemNum_->setScale(0.6);
+        addChild(refreshItemNum_, 2000);
+       
         moveItemNum_ = Label::createWithCharMap("gui/white_font.png", 25, 29, '0');
-        moveItem->addChild(moveItemNum_);
+//        moveItem->addChild(moveItemNum_);
         moveItemNum_->setString(TI()->_itos(UserData::getInstance()->getMoveItemNum()));
-        moveItemNum_->setPosition(50, 10);
+        moveItemNum_->setPosition(654, 1280-1213);
+        moveItemNum_->setScale(0.6);
+        addChild(moveItemNum_, 2000);
 
-
+        
+        CREATE_LABEL(bombItemNum, 377, 1280-1213);
+        CREATE_LABEL(colorItemNum, 231,1280-1213);
+        CREATE_LABEL(digItemNum, 522,1280-1213);
 
         auto currentLevel = Label::createWithCharMap("gui/white_font.png", 25, 29, '0');
         currentLevel->setPosition(Vec2(720 / 2, 1280 - 150));
@@ -223,7 +205,7 @@ bool InGameScene::init()
 
         addChild(currentLevel, 100);
 
-        Menu *pMenu = Menu::create(pPauseItem, moveItem, refreshItem, NULL);
+        Menu *pMenu = Menu::create(pPauseItem, NULL);
         CC_BREAK_IF(! pMenu);
         pMenu->setPosition(Vec2::ZERO);
         addChild(pMenu, 200);
@@ -257,6 +239,9 @@ bool InGameScene::init()
 
     log("<< moves_number_(%d)", moves_number_);
     dealHp();
+    auto item_area = Sprite::create("item_area.png");
+    addChild(item_area, 200);
+    item_area->setPosition(720/2, 60);
     return bRet;
 }
 
@@ -422,14 +407,17 @@ void InGameScene::goCallback(Node *pSender)
 void InGameScene::doRefresh()
 {
 
+    if (USER()->getRefreshItemNum() <= 0)
+    {
+        return;
+    }
     map<int, int> posMap;
 
-    for (int line = 0; line < m_nDiamondLineMax ; ++line)
+    for (int line = 0; line < m_nDiamondLineMax ; line++)
     {
-        for (int row = 0; row < m_nDiamondRowMax; ++row)
+        for (int row = 0; row < m_nDiamondRowMax; row++)
         {
             auto p = m_pDiamond[line][row];
-
             if (!p)
             {
                 continue;
@@ -451,7 +439,7 @@ void InGameScene::doRefresh()
                 continue;
             }
 
-            posMap[newpos] = 1;
+            
             auto newDiamond = m_pDiamond[i][j];
             if (!newDiamond)
             {
@@ -459,7 +447,7 @@ void InGameScene::doRefresh()
             }
 
             m_pDiamond[line][row] = newDiamond;
-
+            posMap[newpos] = 1;
             Vec2 pos = newDiamond->getPosition();
 
             newDiamond->setPosition(p->getPosition());
@@ -469,6 +457,8 @@ void InGameScene::doRefresh()
 
         }
     }
+    USER()->addRefreshItemNum(-1);
+    refreshItemNum_->setString(TI()->_itos(USER()->getRefreshItemNum()));
 }
 
 void InGameScene::addFirstDiamond()
@@ -550,6 +540,10 @@ int InGameScene::isObstacle(int i, int j)
 }
 
 
+Vec2 InGameScene::getCreatePos(int row, int line)
+{
+    return Vec2(CELL_WIDTH * row + OFFSET_X, CELL_HEIGHT * line + OFFSET_Y);
+}
 
 void InGameScene::addDiamond(float delta)
 {
@@ -559,25 +553,18 @@ void InGameScene::addDiamond(float delta)
         if( (ret = isObstacle(m_nDiamondLine,m_nDiamondRow)) > 0 )
         {
             auto sp = Sprite::create("zhuan.png");
-            addChild(sp, 10000);
+            addChild(sp);
             
-            auto pos = Vec2(CELL_WIDTH * m_nDiamondRow + OFFSET_X, CELL_HEIGHT * m_nDiamondLine + OFFSET_Y);
-            sp->setPosition(pos);
+            sp->setPosition(getCreatePos(m_nDiamondRow,m_nDiamondLine));
             m_pDiamond[m_nDiamondLine][m_nDiamondRow] = nullptr;
         }
         else
         {
 			int diamondType = rand() % getDiamondType();
-
 			Diamond *pDiamond = Diamond::createWithSpriteFrameName(Diamond::TypeStr[diamondType]);
 			pDiamond->setType(diamondType);
-
-			pDiamond->setPosition(Vec2(CELL_WIDTH * m_nDiamondRow + 50, 1280 + CELL_HEIGHT));
-			pDiamond->setScale(0.9);
 			m_pDiamondBatchNode->addChild(pDiamond);
-
-			auto pos = Vec2(CELL_WIDTH * m_nDiamondRow + OFFSET_X, CELL_HEIGHT * m_nDiamondLine + OFFSET_Y);
-			pDiamond->setPosition(pos);
+			pDiamond->setPosition(getCreatePos(m_nDiamondRow,m_nDiamondLine));
 			m_pDiamond[m_nDiamondLine][m_nDiamondRow] = pDiamond;
 		}
 
@@ -899,6 +886,27 @@ void InGameScene::onTouchMoved(Touch *pTouch, Event *pEvent)
 
     log("onTouchMoved End ~");
 }
+bool InGameScene::touchColorItem(Vec2 v)
+{
+    Vec2 v1(165, 0);
+    Vec2 v2(265, 1280-1183);
+    return TI()->isInScope(v, v1, v2);
+}
+
+bool InGameScene::touchRefreshItem(Vec2 v)
+{
+    Vec2 v1(0, 0);
+    Vec2 v2(135 , 1280 - 1183);
+    return TI()->isInScope(v, v1, v2);
+}
+
+
+bool InGameScene::touchMoveItem(Vec2 v)
+{
+    Vec2 v1(577, 0);
+    Vec2 v2(720, 1280-1183);
+    return TI()->isInScope(v, v1, v2);
+}
 // #began
 bool InGameScene::onTouchBegan(Touch *pTouch, Event *pEvent)
 {
@@ -909,12 +917,38 @@ bool InGameScene::onTouchBegan(Touch *pTouch, Event *pEvent)
         return true;
     }
 
-
+	
     m_pRemovedDiamond->removeAllObjects();
 
     Vec2 location = pTouch->getLocationInView();
     location = Director::getInstance()->convertToGL(location);
 
+    if (touchRefreshItem(location))
+    {
+        doRefresh();
+        return true;
+    }
+    
+    if (touchColorItem(location))
+    {
+        return true;
+    }
+    
+    if (touchMoveItem(location))
+    {
+        if (UserData::getInstance()->getMoveItemNum() <= 0)
+        {
+            return true;
+        }
+        
+        moves_number_ += 5;
+        showMoveNumber();
+        USER()->addMoveItemNum(-1);
+        moveItemNum_->setString(TI()->_itos(USER()->getMoveItemNum()));
+        return true;
+    }
+    
+    
     for (int line = 0; line < m_nDiamondLineMax; ++line)
     {
         for (int row = 0; row < m_nDiamondRowMax; ++row)
@@ -1312,8 +1346,6 @@ void InGameScene::removeSelectedDiamond()
             num3++;
         }
 
-        //this->playDiamondExplosion(removed->getPosition());
-
         int tag = removed->getTag();
 
         if (tag < 0)
@@ -1336,7 +1368,7 @@ void InGameScene::removeSelectedDiamond()
         }
 
         m_pDiamondBatchNode->removeChild(removed, true);
-        m_pDiamond[line][row] = NULL;
+        m_pDiamond[line][row] = nullptr;
     }
 
     updateGatherNumber(num1, num2, num3);
@@ -1408,7 +1440,6 @@ void InGameScene::addRemovedDiamond(float delta)
                         pDiamond->setType(egg_number);
                     }
 
-                    pDiamond->setScale(0.9);
                     pDiamond->setPosition(Vec2(100 * toRow + 50, 1280 + 100));
                     m_pDiamondBatchNode->addChild(pDiamond, 2);
 

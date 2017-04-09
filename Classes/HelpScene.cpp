@@ -21,9 +21,14 @@
 using namespace cocos2d;
 using namespace CocosDenshion;
 const int BT_OK = 12345;
+const int BUY_HP_BUTTON = 12346;
+
 const int NUMBER_LAYER = 5;
 const float NUMBER_POS_Y = -20.0f;
 const float NUMBER_POS_X = 35.0f;
+
+
+
 Scene *HelpScene::scene()
 {
     auto *scene = Scene::create();
@@ -80,10 +85,16 @@ void HelpScene::showHp()
         paopao->setPosition(hp_->getPosition()-Vec2(0, 57));
         addChild(paopao, 4);
     }
+
+    
     auto t = time(nullptr) -  UserData::getInstance()->getLastTime() ;
     int m = t/1800;
-
-    UserData::getInstance()->addHp(m);
+    if(m > 0)
+    {
+        USER()->setLastTime(time(nullptr));
+    	UserData::getInstance()->addHp(m);
+    }
+    
     if (UserData::getInstance()->getHp() > 6)
     {
         UserData::getInstance()->setHp(6);
@@ -91,8 +102,6 @@ void HelpScene::showHp()
     
     hpNumber_->setPosition(NUMBER_POS_X, NUMBER_POS_Y);
     hpNumber_->setString(TI()->_itos(UserData::getInstance()->getHp())+"/6");
-    hpNumber_->enableOutline(ccc4(255,0,0,255));
-    hpNumber_->enableBold();
     hpNumber_->enableShadow();
 }
 
@@ -292,10 +301,18 @@ void HelpScene::menuBackCallback(Ref *pSender)
 {
     auto obj = (MenuItemImage*)pSender;
     int level = obj->getTag();
-    log("menuBackCallback: = %d!~~", level);
-
+    
+    if (USER()->getHp() < 1)
+    {
+        PopupLayer *pl = PopupLayer::create("game_start.png");
+        pl->setTitle("HP is not enough", 46);
+        pl->setCallbackFunc(this, callfuncN_selector(HelpScene::buttonCallback));
+        pl->addButton("buy_hp.png", "buy_hp.png", Vec2(720/2, 300), BUY_HP_BUTTON);
+        this->addChild(pl, 2000);
+        return;
+    }
+    
     PopupLayer *pl = PopupLayer::create("game_start.png");
-    pl->setContentSize(Size(720, 1280));
     pl->setTitle("", 30);
     pl->setContentText("", 33, 80, 150);
     pl->setCallbackFunc(this, callfuncN_selector(HelpScene::buttonCallback));
@@ -320,7 +337,21 @@ void HelpScene::buttonCallback(Node *pNode)
         
         Director::getInstance()->replaceScene(transition);
     }
+    
+    if (BUY_HP_BUTTON == pNode->getTag())
+    {
+        if (USER()->getSliver() < 3)
+        {
+            return;
+        }
+        
+        USER()->addSliver(-3);
+        USER()->setHp(6);
+        showHp();
+        showSliver();
+    }
 }
+
 bool HelpScene::touchQuit(Vec2 v)
 {
 	Vec2 v1(TI()->getWidth()* 0.9 - 100, TI()->getHeigh()* 0.8 - 100);

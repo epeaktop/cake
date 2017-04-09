@@ -41,7 +41,9 @@ public:
     CC_SYNTHESIZE_ADD(int, _Sellevel, SelLevel);
     CC_SYNTHESIZE_ADD(int, _moveItemNum, MoveItemNum);
     CC_SYNTHESIZE_ADD(int, _refreshNum, RefreshItemNum);
-    CC_SYNTHESIZE_ADD(int, _colorNum, ColorItemNum);
+    CC_SYNTHESIZE_ADD(int, _colorNum, colorItemNum);
+    CC_SYNTHESIZE_ADD(int, _digNum, digItemNum);
+    CC_SYNTHESIZE_ADD(int, _bombNum, bombItemNum);
     
 	CC_SYNTHESIZE(bool, _raffle, Raffle);
 	CC_SYNTHESIZE(bool, _haveRaffle, HaveRaffle);
@@ -72,6 +74,6 @@ public:
     
 };
 
-
+#define USER UserData::getInstance
 
 #endif

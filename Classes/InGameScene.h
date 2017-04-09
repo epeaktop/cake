@@ -118,6 +118,11 @@ private:
     void doRefresh();
     
     string getImageName(int type);
+    Vec2 getCreatePos(int i, int j);
+    
+    bool touchRefreshItem(Vec2 location);
+    bool touchColorItem(Vec2 location);
+    bool touchMoveItem(Vec2 location);
     
 public:
     vector<Sequence* > animList_;
@@ -192,11 +197,21 @@ private:
     GatherLayer* gl_ = nullptr;
     Label * moveItemNum_ = nullptr;
     Label * refreshItemNum_ = nullptr;
+    Label * colorItemNum_ = nullptr;
+    Label * bombItemNum_ = nullptr;
+    Label * digItemNum_ = nullptr;
+    
     bool isRecsue_ = false;
     int egg_num_ = 0;
 
     void registEvent();
     
 };
+
+#define CREATE_LABEL(moveItemNum, x, y) do { moveItemNum##_ = Label::createWithCharMap("gui/white_font.png", 25, 29, '0'); \
+moveItemNum##_->setString(TI()->_itos(UserData::getInstance()->get##moveItemNum())); \
+moveItemNum##_->setPosition(x, y); \
+moveItemNum##_->setScale(0.6); \
+addChild(moveItemNum##_, 2000);} while(0)
 
 #endif
