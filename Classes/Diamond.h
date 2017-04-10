@@ -2,10 +2,10 @@
 #define __DIAMOND_H__
 
 #include "cocos2d.h"
-#define CLEAR_ONE_LINE 0
-#define CLEAR_ONE_ROW  1
-#define ITEM_BOMB      2
-#define ITEM_ONE_COL   3
+#define CLEAR_ONE_LINE 1
+#define CLEAR_ONE_ROW  2
+#define ITEM_BOMB      3
+#define ITEM_ONE_COL   4
 
 using namespace cocos2d;
 

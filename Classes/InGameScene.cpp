@@ -931,6 +931,20 @@ bool InGameScene::onTouchBegan(Touch *pTouch, Event *pEvent)
     
     if (touchColorItem(location))
     {
+        if(USER()->getcolorItemNum() <= 0)
+        {
+            return true;
+        }
+        USER()->addcolorItemNum(-1);
+        removeOneColor(rand()%4);
+        
+        auto count = m_pRemovedDiamond->count();
+        removeSelectedDiamond(1);
+        schedule(schedule_selector(InGameScene::addRemovedDiamond), 1 / 40);
+        createItemDiamond(count);
+        
+        colorItemNum_->setString(TI()->_itos(USER()->getcolorItemNum()));
+        
         return true;
     }
     
@@ -997,7 +1011,11 @@ void InGameScene::onTouchEnded(Touch *pTouch, Event *pEvent)
         auto sp = (Sprite *) pObj;
         sp->removeFromParent();
     }
-    m_lineObjs->removeAllObjects();
+    if (m_lineObjs!=nullptr)
+    {
+        m_lineObjs->removeAllObjects();
+    }
+    
 
 
     playSound("sounds/Remove.mp3");
@@ -1045,8 +1063,9 @@ void InGameScene::showTime()
     posList_.clear();
     callJava("showAds", "");
 
-    for (int i = 0; i < moves_number_; i++)
+    for (int i = 0; i < moves_number_ && i < 5; i++)
     {
+   
         Vec2 pos = getRandomPosition();
 
         auto _move = MoveTo::create(MOVE_NUMBER_MOVE_TIME, pos);
@@ -1263,8 +1282,31 @@ void InGameScene::update(float delta)
 //#addScore
 void InGameScene::playJumpScore(int count)
 {
+    int m = 10;
+    if(count < 4)
+    {
+        m = 20;
+    }
+    else if(m < 6)
+    {
+        m = 30;
+    }
+    else if(m < 8)
+    {
+        m = 80;
+    }
+    else if(m < 15)
+    {
+        m = 150;
+    }
+    else
+    {
+        m = 200;
+    }
 
-    m_nTempScore = count * 50 + 10 * (count - 2);
+
+
+    m_nTempScore = count * 50 + m * (count - 2);
     m_nScore += m_nTempScore;
 
     schedule(schedule_selector(InGameScene::playJumpScoreUpdate), 0.4f / 60);
@@ -1313,14 +1355,17 @@ void InGameScene::removeExplosionCallback(Node *pSender)
     this->removeChild(pSender, true);
 }
 
-void InGameScene::removeSelectedDiamond()
+void InGameScene::removeSelectedDiamond(int flag)
 {
     Diamond *removed = NULL;
     Ref *pObj = NULL;
     int num1 = 0;
     int num2 = 0;
     int num3 = 0;
-    trigerItem();
+    if(flag == 1)
+    {
+    	trigerItem();
+    }
     playJumpScore(m_pRemovedDiamond->count());
     CCARRAY_FOREACH(m_pRemovedDiamond, pObj)
     {
@@ -1544,7 +1589,7 @@ void InGameScene::createItemDiamond(int count)
 
     if (count < 8)
     {
-        row = RANDOM_RANGE(0, 1.9);
+        row = RANDOM_RANGE(1, 2.9);
     }
     else
     {
@@ -1653,50 +1698,41 @@ void InGameScene::removeOneColor(int type)
 void InGameScene::trigerItem()
 {
     Ref *pObj;
+    int itemType = -1;
+    Diamond* sp = nullptr;
+    
     CCARRAY_FOREACH(m_pRemovedDiamond, pObj)
     {
-        auto sp = (Diamond *)pObj;
+        sp = (Diamond *)pObj;
 
         if (!sp)
         {
             continue;
         }
 
-        if (sp->getReferenceCount() <= 0)
+        itemType = sp->getItemType();
+        if (itemType > 0)
         {
-            continue;
+            break;
         }
-
-        int itemType = sp->getItemType();
-
-        if (itemType == -1)
-        {
-            continue;
-        }
-
-        auto tag = sp->getTag();
-        int line = tag / m_nDiamondRowMax, row = tag % m_nDiamondRowMax;
-
-        if (itemType == CLEAR_ONE_LINE)
-        {
-            removedOneLine(line);
-            continue;
-        }
-
-        if (itemType == CLEAR_ONE_ROW)
-        {
-            removedOneRow(row);
-            continue;
-        }
-
-        if (itemType == ITEM_ONE_COL)
-        {
-            removeOneColor(sp->getType());
-            continue;
-        }
-
     }
-
+    
+    auto tag = sp->getTag();
+    int line = tag / m_nDiamondRowMax, row = tag % m_nDiamondRowMax;
+    if (itemType == CLEAR_ONE_LINE)
+    {
+        removedOneLine(line);
+    }
+    
+    if (itemType == CLEAR_ONE_ROW)
+    {
+        removedOneRow(row);
+    }
+    
+    if (itemType == ITEM_ONE_COL)
+    {
+        removeOneColor(sp->getType());
+    }
 }
 
 void InGameScene::addRemovedDiamondCallback(Node *pSender)

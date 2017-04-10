@@ -216,13 +216,28 @@ void PopupLayer::showOpenBoxAnimi(int flag)
     box1->runAction(b);
     box2->runAction(c);
     
-    auto sp = Sprite::create("gui/item_move.png");
+    
+    int ret = rand() % 2;
+    
+    Sprite* sp = nullptr;
+    if(ret == 0)
+    {
+        sp = Sprite::create("gui/item_move.png");
+        UserData::getInstance()->addMoveItemNum(1);
+    }
+    
+    if(ret == 1)
+    {
+        sp = Sprite::create("icon_sliver_box.png");
+        UserData::getInstance()->addSliver(10);
+    }
+    
     addChild(sp);
     sp->setPosition(720/2, 1280 - 575);
     auto fi = FadeIn::create(0.5);
     sp->runAction(fi);
     addChild(a);
-    UserData::getInstance()->addMoveItemNum(1);
+    
 }
 bool PopupLayer::addButton(const char *normalImage, const char *selectedImage, Vec2 pos, int tag)
 {

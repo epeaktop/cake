@@ -54,7 +54,7 @@ private:
 
 
 	bool handleSelectedDiamond();
-	void removeSelectedDiamond();
+	void removeSelectedDiamond(int flag = 0);
 	void addRemovedDiamond(float delta);
 
 	void playDiamondExplosion(const CCPoint pos);
