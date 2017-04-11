@@ -907,6 +907,7 @@ bool InGameScene::touchMoveItem(Vec2 v)
     Vec2 v2(720, 1280-1183);
     return TI()->isInScope(v, v1, v2);
 }
+
 // #began
 bool InGameScene::onTouchBegan(Touch *pTouch, Event *pEvent)
 {
@@ -935,11 +936,12 @@ bool InGameScene::onTouchBegan(Touch *pTouch, Event *pEvent)
         {
             return true;
         }
-        USER()->addcolorItemNum(-1);
-        removeOneColor(rand()%4);
         
-        auto count = m_pRemovedDiamond->count();
+        USER()->addcolorItemNum(-1);
+        
+        removeOneColor(rand() % getDiamondType());
         removeSelectedDiamond(1);
+        
         schedule(schedule_selector(InGameScene::addRemovedDiamond), 1 / 40);
         
         colorItemNum_->setString(TI()->_itos(USER()->getcolorItemNum()));
@@ -1359,10 +1361,12 @@ void InGameScene::removeSelectedDiamond(int flag)
     int num1 = 0;
     int num2 = 0;
     int num3 = 0;
-    if(flag == 1)
+    
+    if(flag != 1)
     {
     	trigerItem();
     }
+    
     playJumpScore(m_pRemovedDiamond->count());
     CCARRAY_FOREACH(m_pRemovedDiamond, pObj)
     {
@@ -1389,7 +1393,6 @@ void InGameScene::removeSelectedDiamond(int flag)
         }
 
         int tag = removed->getTag();
-
         if (tag < 0)
         {
             continue;
@@ -1403,7 +1406,6 @@ void InGameScene::removeSelectedDiamond(int flag)
         }
 
         auto _sp = m_pDiamondBatchNode->getChildByTag(tag);
-
         if (nullptr == _sp || removed != _sp)
         {
             continue;
@@ -1420,7 +1422,6 @@ void InGameScene::removeSelectedDiamond(int flag)
 void InGameScene::addRemovedDiamond(float delta)
 {
     int toLine, toRow;
-
     for (toLine = 0; toLine < m_nDiamondLineMax ; ++toLine)
     {
         for (toRow = 0; toRow < m_nDiamondRowMax ; ++toRow)
@@ -1584,7 +1585,7 @@ void InGameScene::createItemDiamond(int count)
 
     auto diamond = m_pDiamond[line][row];
 
-    if (count < 8)
+    if (count < 10)
     {
         row = RANDOM_RANGE(1, 2.9);
     }
@@ -1663,6 +1664,7 @@ void InGameScene::removedOneRow(int _row)
         }
     }
 }
+
 void InGameScene::removeOneColor(int type)
 {
     for (int line = 0; line < m_nDiamondLineMax; ++line)
@@ -1671,7 +1673,6 @@ void InGameScene::removeOneColor(int type)
         {
 
             auto diamond = m_pDiamond[line][row];
-
             if (!diamond)
             {
                 continue;
@@ -1703,6 +1704,8 @@ void InGameScene::trigerItem()
         sp = (Diamond *)pObj;
         CCASSERT(sp, "sp got nil!");
         itemType = sp->getItemType();
+        
+        log("<trigItem> itemType(%d)", itemType);
         if (itemType > 0)
         {
             break;
@@ -1710,7 +1713,10 @@ void InGameScene::trigerItem()
     }
     
     auto tag = sp->getTag();
-    int line = tag / m_nDiamondRowMax, row = tag % m_nDiamondRowMax;
+    
+    int line = tag / m_nDiamondRowMax;
+    int row = tag % m_nDiamondRowMax;
+    
     if (itemType == CLEAR_ONE_LINE)
     {
         removedOneLine(line);
