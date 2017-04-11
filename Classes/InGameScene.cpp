@@ -910,7 +910,7 @@ bool InGameScene::touchMoveItem(Vec2 v)
 // #began
 bool InGameScene::onTouchBegan(Touch *pTouch, Event *pEvent)
 {
-    log("[onTouchBegan] begin ~");
+    log("[onTouchBegan] begin!");
     if (! m_bIsReadyGoEnd)
     {
         log("[onTouchBegan] m_bIsReadyGoEnd is false !");
@@ -941,7 +941,6 @@ bool InGameScene::onTouchBegan(Touch *pTouch, Event *pEvent)
         auto count = m_pRemovedDiamond->count();
         removeSelectedDiamond(1);
         schedule(schedule_selector(InGameScene::addRemovedDiamond), 1 / 40);
-        createItemDiamond(count);
         
         colorItemNum_->setString(TI()->_itos(USER()->getcolorItemNum()));
         
@@ -1022,12 +1021,10 @@ void InGameScene::onTouchEnded(Touch *pTouch, Event *pEvent)
     auto count = m_pRemovedDiamond->count();
     removeSelectedDiamond();
     schedule(schedule_selector(InGameScene::addRemovedDiamond), 1 / 40);
-    log("< moves_number_(%d)", moves_number_);
     createItemDiamond(count);
 
-    log("> moves_number_(%d)", moves_number_);
+    
     moves_number_ = moves_number_ - 1;
-    log(">> moves_number_(%d)", moves_number_);
     showMoveNumber();
 
     if (isGatherMode())
@@ -1567,7 +1564,7 @@ string InGameScene::getItemIconName(int type)
 }
 void InGameScene::createItemDiamond(int count)
 {
-    if (count < 3)
+    if (count < 5)
     {
         return;
     }
@@ -1607,7 +1604,7 @@ void InGameScene::createItemDiamond(int count)
     {
         name = name + "_row.png";
     }
-    else
+    else if(row == ITEM_ONE_COL)
     {
         name = name + "_bomb.png";
     }
@@ -1704,12 +1701,7 @@ void InGameScene::trigerItem()
     CCARRAY_FOREACH(m_pRemovedDiamond, pObj)
     {
         sp = (Diamond *)pObj;
-
-        if (!sp)
-        {
-            continue;
-        }
-
+        CCASSERT(sp, "sp got nil!");
         itemType = sp->getItemType();
         if (itemType > 0)
         {
