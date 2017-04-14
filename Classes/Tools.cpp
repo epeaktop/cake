@@ -160,3 +160,21 @@ int Tools::getDay()
     
     return tm->tm_mday;//日
 }
+
+Tools::shakeNode(cocos2d::Node *obj)
+{
+
+    if (!obj)
+    {
+        return;
+    }
+    
+    Action* act = Sequence::create(ScaleTo::create(0.0, 0.0),
+                                   ScaleTo::create(0.06, 1.05),
+                                   ScaleTo::create(0.08, 0.95),
+                                   ScaleTo::create(0.08, 1.0), NULL);
+    obj->runAction(act);
+    
+}
+
+

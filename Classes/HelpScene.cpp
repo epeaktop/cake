@@ -66,6 +66,8 @@ void HelpScene::showSliver()
     int i = UserData::getInstance()->getSliver();
     sliverNumber_->setString(TI()->_itos(i));
     sliverNumber_->setPosition(NUMBER_POS_X, NUMBER_POS_Y);
+    
+    TI()->shakeNode(sliverNumber_);
 }
 
 
@@ -105,6 +107,8 @@ void HelpScene::showHp()
     hpNumber_->setPosition(NUMBER_POS_X, NUMBER_POS_Y);
     hpNumber_->setString(TI()->_itos(UserData::getInstance()->getHp())+"/6");
     hpNumber_->enableShadow();
+    TI()->shakeNode(hpNumber_);
+    
 }
 
 void HelpScene::showQuit()

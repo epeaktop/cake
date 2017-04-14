@@ -30,6 +30,9 @@ public:
     int getMonth();
     int getDay();
     
+    
+    void shakeNode(Node* obj);
+    
 private:
     static Tools* instance_;
         
