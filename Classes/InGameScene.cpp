@@ -938,14 +938,8 @@ bool InGameScene::onTouchBegan(Touch *pTouch, Event *pEvent)
         }
         
         USER()->addcolorItemNum(-1);
-        
-        removeOneColor(rand() % getDiamondType());
-        removeSelectedDiamond(1);
-        
-        schedule(schedule_selector(InGameScene::addRemovedDiamond), 1 / 40);
-        
+        createItemDiamond(20);
         colorItemNum_->setString(TI()->_itos(USER()->getcolorItemNum()));
-        
         return true;
     }
     
@@ -985,6 +979,7 @@ bool InGameScene::onTouchBegan(Touch *pTouch, Event *pEvent)
 
     return true;
 }
+
 void InGameScene::showMoveNumber()
 {
     log("moves_number_(%d)", moves_number_);
@@ -1018,13 +1013,11 @@ void InGameScene::onTouchEnded(Touch *pTouch, Event *pEvent)
     }
     
 
-
     playSound("sounds/Remove.mp3");
     auto count = m_pRemovedDiamond->count();
     removeSelectedDiamond();
     schedule(schedule_selector(InGameScene::addRemovedDiamond), 1 / 40);
     createItemDiamond(count);
-
     
     moves_number_ = moves_number_ - 1;
     showMoveNumber();
@@ -1049,6 +1042,7 @@ void InGameScene::onTouchEnded(Touch *pTouch, Event *pEvent)
         return showFail();
     }
 }
+
 Vec2 InGameScene::getRandomPosition()
 {
     int line = rand() % (m_nDiamondLineMax - 1);
@@ -1116,8 +1110,8 @@ void InGameScene::bombAllBombs()
     {
         int line = tag / m_nDiamondRowMax, row = tag % m_nDiamondRowMax;
         bombPos(line, row);
+        
         auto _bomb = getChildByTag(1000 + tag);
-
         if (_bomb)
         {
             _bomb->setVisible(false);
@@ -1136,6 +1130,7 @@ void InGameScene::bombAllBombs()
     auto seq = Sequence::create(delay, func, NULL);
     runAction(seq);
 }
+
 void InGameScene::playMoveAnim(float dt)
 {
     if (animList_.size() == 0)
@@ -1153,7 +1148,6 @@ void InGameScene::playMoveAnim(float dt)
     animList_.pop_back();
     moves_number_ -= 1;
     showMoveNumber();
-
 }
 
 void InGameScene::showFail()
@@ -1200,8 +1194,6 @@ void InGameScene::showWin()
     {
         UserData::getInstance()->addLevel(1);
     }
-    
-
 }
 
 float InGameScene::getAnimTime()
@@ -1226,7 +1218,6 @@ void InGameScene::moveCallback(Node *pSender)
             if ((m_pDiamond[line][row])->boundingBox().containsPoint(pos))
             {
 
-
                 auto _delay   = DelayTime::create(ITEM_FADEOUT_TIME);
                 auto _fadein  = FadeIn::create(BOMB_SHOW_TIME);
                 auto _sequeue = Sequence::create(_delay, _fadein, NULL);
@@ -1246,7 +1237,6 @@ void InGameScene::moveCallback(Node *pSender)
             }
         }
     }
-
 }
 
 bool InGameScene::handleSelectedDiamond()
@@ -1703,8 +1693,8 @@ void InGameScene::trigerItem()
     {
         sp = (Diamond *)pObj;
         CCASSERT(sp, "sp got nil!");
-        itemType = sp->getItemType();
         
+        itemType = sp->getItemType();
         log("<trigItem> itemType(%d)", itemType);
         if (itemType > 0)
         {

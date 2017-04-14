@@ -43,6 +43,8 @@ int Tools::_stoi(string s)
     return num;
 }
 
+
+
 string Tools::_itos(int s)
 {
     stringstream _ss;
@@ -107,7 +109,54 @@ float Tools::getWidth()
 
 
 
+int Tools::getYear()
+{
+    struct tm *tm;
+    time_t timep;
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+    time(&timep);
+#else
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    timep = tv.tv_sec;
+#endif
+    
+    tm = localtime(&timep);
+    return tm->tm_year + 1900;//年
+}
 
+int Tools::getMonth()
+{
+    struct tm *tm;
+    time_t timep;
 
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+    time(&timep);
+#else
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    timep = tv.tv_sec;
+#endif
+    
+    tm = localtime(&timep);
+   
+    return tm->tm_mon + 1;//月
+    
+}
 
-
+int Tools::getDay()
+{
+    struct tm *tm;
+    time_t timep;
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+    time(&timep);
+#else
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    timep = tv.tv_sec;
+#endif
+    
+    tm = localtime(&timep);
+    
+    return tm->tm_mday;//日
+}

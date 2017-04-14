@@ -24,6 +24,12 @@ public:
     float getWidth();
     float getHeigh();
 	bool isInScope(Vec2 v, Vec2 v1, Vec2 v2);
+    
+    
+    int getYear();
+    int getMonth();
+    int getDay();
+    
 private:
     static Tools* instance_;
         

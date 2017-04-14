@@ -4,6 +4,7 @@
 #include "UserData.h"
 #define TTF_FONT_NAME  "FZDHTJW.TTF"
 #include "NDKHelper.h"
+#include "Tools.h"
 
 PopupLayer::PopupLayer():
     m__pMenu(NULL)
@@ -238,6 +239,7 @@ void PopupLayer::showOpenBoxAnimi(int flag)
     sp->runAction(fi);
     addChild(a);
     
+    
 }
 bool PopupLayer::addButton(const char *normalImage, const char *selectedImage, Vec2 pos, int tag)
 {
@@ -251,11 +253,9 @@ bool PopupLayer::addButton(const char *normalImage, const char *selectedImage, V
     
     
     auto charMap = Label::createWithCharMap("gui/white_font.png", 25, 29, '0');
-    charMap->setPosition(720/2, 1280-475);
-    std::stringstream ss;
-    ss.str("");
-    ss << level_;
-    charMap->setString(ss.str());
+    charMap->setPosition(408, 1280-300);
+    charMap->setString(TI()->_itos(level_));
+    charMap->setScale(1.5);
     addChild(charMap,100);
     return true;
 }
@@ -352,7 +352,6 @@ void PopupLayer::buyItem(int itemId)
     }
     
     addItem(itemId);
-    
     showGotItemAnim(itemId);
 }
 

@@ -11,6 +11,7 @@
 #include "UserData.h"
 #include "Cover.h"
 #include "Tools.h"
+#include "Sign.h"
 
 // #每个游戏都会不一样游戏场景头文件
 #include "InGameScene.h"
@@ -22,6 +23,7 @@ using namespace cocos2d;
 using namespace CocosDenshion;
 const int BT_OK = 12345;
 const int BUY_HP_BUTTON = 12346;
+const int SIGN_BUTTON = 12347;
 
 const int NUMBER_LAYER = 5;
 const float NUMBER_POS_Y = -20.0f;
@@ -34,10 +36,10 @@ Scene *HelpScene::scene()
     auto *scene = Scene::create();
 
     HelpScene *layer = HelpScene::create();
-
+    layer->setTag(3389);
     scene->addChild(layer);
 
-
+	
     return scene;
 }
 
@@ -237,7 +239,6 @@ bool HelpScene::init()
         charMap->setPosition(Vec2(60,90));
         charMap->setString(TI()->_itos(i));
         
-        
         if(sp!=nullptr)
         {
         	sp->setPosition(60, 120);
@@ -287,6 +288,14 @@ bool HelpScene::init()
 
     _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
     showStar();
+    Sign* _sign = Sign::create("sign.png");
+    if (_sign->todayYetGot())
+    {
+        _sign->setCallbackFunc(this, callfuncN_selector(HelpScene::buttonCallback));
+        _sign->addButton("start_bt.png", "start_bt.png", Vec2(720/2, 260), SIGN_BUTTON);
+        addChild(_sign, 2000);
+    }
+
     return true;
 }
 
