@@ -4,6 +4,8 @@
 #define MAX_LEVEL 100
 
 #include <iostream>
+#include <vector>
+
 using namespace std;
 
 struct TargetData

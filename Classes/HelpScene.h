@@ -47,7 +47,7 @@ private:
     int starNum_ = 0;
     
 public:
-
+	virtual void update(float delta);
 	virtual bool init();
     virtual void onExit();
 	static Scene* scene();

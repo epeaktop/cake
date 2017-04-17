@@ -67,9 +67,12 @@ void HelpScene::showSliver()
     sliverNumber_->setString(TI()->_itos(i));
     sliverNumber_->setPosition(NUMBER_POS_X, NUMBER_POS_Y);
     
-    TI()->shakeNode(sliverNumber_);
+    //TI()->shakeNode(sliverNumber_);
 }
-
+void HelpScene::update(float delta)
+{
+    showSliver();
+}
 
 void HelpScene::showHp()
 {
@@ -299,7 +302,7 @@ bool HelpScene::init()
         _sign->addButton("start_bt.png", "start_bt.png", Vec2(720/2, 260), SIGN_BUTTON);
         addChild(_sign, 2000);
     }
-
+ scheduleUpdate();
     return true;
 }
 
