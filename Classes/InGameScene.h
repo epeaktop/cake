@@ -123,7 +123,7 @@ private:
     bool touchRefreshItem(Vec2 location);
     bool touchColorItem(Vec2 location);
     bool touchMoveItem(Vec2 location);
-    //string get
+    string getElementName(int type);
     
 public:
     vector<Sequence* > animList_;

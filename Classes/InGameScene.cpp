@@ -238,7 +238,23 @@ bool InGameScene::init()
     
     return bRet;
 }
-
+string InGameScene::getElementName(int type)
+{
+    
+    stringstream _name;
+    
+    if (!TI()->isDiamond())
+    {
+        _name << Diamond::TypeStr[type];
+    }
+    else
+    {
+        auto _type = type + 1;
+        _name << _type <<".png";
+    }
+    
+    return _name.str();
+}
 void InGameScene::registEvent()
 {
     auto listener = EventListenerTouchOneByOne::create();
@@ -556,20 +572,10 @@ void InGameScene::addDiamond(float delta)
         {
 			int diamondType = rand() % getDiamondType();
             
-            stringstream _name;
-            if (!TI()->isDiamond())
-            {
-                _name << Diamond::TypeStr[diamondType];
-            }
-            else
-            {
-                auto _type = diamondType + 1;
-                _name << _type <<".png";
-            }
-            
-			Diamond *pDiamond = Diamond::createWithSpriteFrameName(_name.str().c_str());
+
+			Diamond *pDiamond = Diamond::createWithSpriteFrameName(getElementName(diamondType).c_str());
 			pDiamond->setType(diamondType);
-			//m_pDiamondBatchNode->addChild(pDiamond);
+            
             addChild(pDiamond);
 			pDiamond->setPosition(getCreatePos(m_nDiamondRow,m_nDiamondLine));
 			m_pDiamond[m_nDiamondLine][m_nDiamondRow] = pDiamond;
@@ -1416,13 +1422,25 @@ void InGameScene::removeSelectedDiamond(int flag)
             continue;
         }
 
-        auto _sp = m_pDiamondBatchNode->getChildByTag(tag);
-        if (nullptr == _sp || removed != _sp)
+        if (TI()->isDiamond())
         {
-            continue;
+            auto _sp = getChildByTag(tag);
+            if (nullptr == _sp || removed != _sp)
+            {
+                continue;
+            }
+            removeChildByTag(tag);
         }
-
-        m_pDiamondBatchNode->removeChild(removed, true);
+        else
+        {
+            auto _sp = m_pDiamondBatchNode->getChildByTag(tag);
+            if (nullptr == _sp || removed != _sp)
+            {
+                continue;
+            }
+   	
+            m_pDiamondBatchNode->removeChild(removed, true);
+        }
         m_pDiamond[line][row] = nullptr;
     }
 
@@ -1482,7 +1500,7 @@ void InGameScene::addRemovedDiamond(float delta)
                 if (fromLine == m_nDiamondLineMax)
                 {
                     int diamondType = rand() % getDiamondType();
-                    Diamond *pDiamond = Diamond::createWithSpriteFrameName(Diamond::TypeStr[diamondType]);
+                    Diamond *pDiamond = Diamond::createWithSpriteFrameName(getElementName(diamondType).c_str());
                     pDiamond->setType(diamondType);
 
                     int num = rand() % 10 ;
@@ -1495,8 +1513,14 @@ void InGameScene::addRemovedDiamond(float delta)
                     }
 
                     pDiamond->setPosition(Vec2(100 * toRow + 50, 1280 + 100));
-                    m_pDiamondBatchNode->addChild(pDiamond, 2);
-
+                    if (TI()->isDiamond())
+                    {
+                        addChild(pDiamond, 2);
+                    }
+                    else
+                    {
+                        m_pDiamondBatchNode->addChild(pDiamond, 2);
+                    }
                     //播放宝石被添加时掉落的效果
                     pDiamond->setMoving(true);
                     setupTag(pDiamond, toLine, toRow);
