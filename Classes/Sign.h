@@ -1,0 +1,84 @@
+#pragma once
+#include "cocos2d.h"
+#include "cocos-ext.h"
+#include <iostream>
+#include <sstream>
+using namespace cocos2d;
+using namespace cocos2d::extension;
+using namespace std;
+
+class Sign : public cocos2d::Layer
+{
+public:
+    Sign();
+    ~Sign();
+
+    virtual bool init();
+    CREATE_FUNC(Sign);
+
+
+    bool TouchBegan(cocos2d::Touch *pTouch, cocos2d::Event *pEvent);
+
+    static Sign* create(const char* backgroundImage);
+
+
+    void setTitle(const char*title, int fontsize = 20);
+
+    void setContentText(const char *text, int fontsize = 20, int padding = 50, int paddintTop = 100);
+
+    void setCallbackFunc(Ref* target, SEL_CallFuncN callfun);
+
+    bool addButton(const char* normalImage, const char* selectedImage, const char* title, int tag = 0);
+    bool addButton(const char* normalImage, const char* selectedImage, Vec2 pos, int tag = 0);
+
+    virtual void onEnter();
+    virtual void onExit();
+    void showOpenBoxAnimi(int flag);
+    
+    int level_;
+    void registEvent();
+    virtual bool onTouchBegan(Touch *pTouch, Event *pEvent);
+    virtual void onTouchMoved(Touch *pTouch, Event *pEvent);
+    virtual void onTouchEnded(Touch *pTouch, Event *pEvent);
+    
+    /**
+     * @ 根据规则创建按钮
+     */
+    void createButton(const char* name, const int tag, float x, float y);
+    void buyItem(int itemId);
+    int getPrice(int itemId);
+    int getMoney();
+    bool subMoney(int price);
+    void addItem(int itemId);
+    void showGotItemAnim(int itemId);
+	
+    void setGot();
+    void showGotItemAnim();
+    void giveItem();
+    
+    bool todayYetGot();
+    string saveString(int day);
+    
+    
+    void showHadSigned();
+    Vec2 getPosByDay(int i);
+    
+private:
+
+    void buttonCallback(Ref* pSender);
+
+    // 文字内容两边的空白区
+    int m_contentPadding;
+    int m_contentPaddingTop;
+
+    Ref* m_callbackListener;
+    SEL_CallFuncN m_callback;
+
+    CC_SYNTHESIZE_RETAIN(Menu*, m__pMenu, MenuButton);
+    CC_SYNTHESIZE_RETAIN(Sprite*, m__sfBackGround, SpriteBackGround);
+    CC_SYNTHESIZE_RETAIN(ui::Scale9Sprite*, m__s9BackGround, Sprite9BackGround);
+    CC_SYNTHESIZE_RETAIN(Label*, m__ltTitle, LabelTitle);
+    CC_SYNTHESIZE_RETAIN(Label*, m__ltContentText, LabelContentText);
+    int signCount_ = 0;
+    
+};
