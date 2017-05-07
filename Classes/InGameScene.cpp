@@ -562,10 +562,10 @@ void InGameScene::addDiamond(float delta)
         int ret = 0;
         if( (ret = isObstacle(m_nDiamondLine,m_nDiamondRow)) > 0 )
         {
-            auto sp = Sprite::create("zhuan.png");
-            addChild(sp);
-            
-            sp->setPosition(getCreatePos(m_nDiamondRow,m_nDiamondLine));
+//            auto sp = Sprite::create("zhuan.png");
+//            addChild(sp);
+//            
+//            sp->setPosition(getCreatePos(m_nDiamondRow,m_nDiamondLine));
             m_pDiamond[m_nDiamondLine][m_nDiamondRow] = nullptr;
         }
         else
@@ -603,6 +603,10 @@ void InGameScene::drawBg()
 
         for (auto row = 0; row < 7; row++)
         {
+            if(isObstacle(line, row))
+            {
+                continue;
+            }
             auto sp1 = Sprite::create("gui/b1.png");
             auto sp2 = Sprite::create("gui/b2.png");
 
@@ -897,7 +901,7 @@ void InGameScene::onTouchMoved(Touch *pTouch, Event *pEvent)
             }
         }
     }
-
+   
     log("onTouchMoved End ~");
 }
 bool InGameScene::touchColorItem(Vec2 v)
@@ -953,6 +957,7 @@ bool InGameScene::onTouchBegan(Touch *pTouch, Event *pEvent)
         
         USER()->addcolorItemNum(-1);
         createItemDiamond(20);
+        drawItemIcon();
         colorItemNum_->setString(TI()->_itos(USER()->getcolorItemNum()));
         return true;
     }
@@ -1032,7 +1037,7 @@ void InGameScene::onTouchEnded(Touch *pTouch, Event *pEvent)
     removeSelectedDiamond();
     schedule(schedule_selector(InGameScene::addRemovedDiamond), 1 / 40);
     createItemDiamond(count);
-    
+    drawItemIcon();
     moves_number_ = moves_number_ - 1;
     showMoveNumber();
 
@@ -1581,22 +1586,49 @@ string InGameScene::getItemIconName(int type)
     switch (type)
     {
     case CLEAR_ONE_LINE:
-        return "gui/one_line.png";
+        return "gui/item_line.png";
 
     case CLEAR_ONE_ROW:
-        return "gui/one_row.png";
+        return "gui/item_row.png";
 
     case ITEM_BOMB:
         return "gui/bomb.png";
 
     case ITEM_ONE_COL:
-        return "gui/one_color.png";
+        return "gui/item_bomb2.png";
 
     default:
         break;
     }
 
-    return "one_line.png";
+    return "item_line.png";
+}
+void InGameScene::drawItemIcon()
+{
+    for (int line = 0; line < m_nDiamondLineMax; ++line)
+    {
+        for (int row = 0; row < m_nDiamondRowMax; ++row)
+        {
+            auto sp = m_pDiamond[line][row];
+            if(sp == nullptr)
+            {
+                continue;
+            }
+            auto old = getChildByTag(10000 + sp->getTag());
+            if (old)
+            {
+                old->removeChildByTag(10000 + sp->getTag());
+            }
+            if (sp->getItemType() > -1)
+            {
+                auto p = Sprite::create(getItemIconName(sp->getItemType()));
+                addChild(p, 3);
+                p->setPosition(sp->getPosition());
+                p->setTag(line * m_nDiamondRowMax + row  + 10000);
+            }
+        }
+    }
+
 }
 void InGameScene::createItemDiamond(int count)
 {
@@ -1630,8 +1662,12 @@ void InGameScene::createItemDiamond(int count)
     }
 
     diamond->setItemType(row);
+    if (TI()->isDiamond())
+    {
+        return;
+    }
+    
     auto name = getImageName(diamond->getType());
-
     if (row == CLEAR_ONE_LINE)
     {
         name = name + "_line.png";

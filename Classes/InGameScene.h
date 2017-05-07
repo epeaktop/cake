@@ -124,7 +124,7 @@ private:
     bool touchColorItem(Vec2 location);
     bool touchMoveItem(Vec2 location);
     string getElementName(int type);
-    
+    void drawItemIcon();
 public:
     vector<Sequence* > animList_;
     vector<int > posList_;
