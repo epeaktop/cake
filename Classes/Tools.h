@@ -32,7 +32,15 @@ public:
     
     
     void shakeNode(Node* obj);
+    bool startWith(const string &mainstr, const string &substr)
+    {
+        return mainstr.find(substr)==0 ? 1 : 0;
+    }
     
+    bool isDiamond()
+    {
+        return true;
+    }
 private:
     static Tools* instance_;
         

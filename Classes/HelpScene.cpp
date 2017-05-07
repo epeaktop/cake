@@ -151,7 +151,6 @@ int HelpScene::getStarNumbers()
     return starNum_;
 }
 
-
 bool HelpScene::init()
 {
     if (!Layer::init())
@@ -174,12 +173,10 @@ bool HelpScene::init()
     this->addChild(bjSprite, 1);
 
     auto charMap = Label::createWithCharMap("scoreNumber.png", 54, 64, '0');
-    charMap->setPosition(Point(size.width/2,size.height*0.4));
+    charMap->setPosition(Point(size. width/2,size.height*0.4));
   
     this->addChild(charMap,3);
     
-    
-  
     helpLayer = Layer::create();
     helpLayer->setAnchorPoint(Vec2::ZERO);
     helpLayer->setPosition(Vec2::ZERO);
@@ -206,16 +203,18 @@ bool HelpScene::init()
                 auto rf = RepeatForever::create(seq);
                 cur_sp->runAction(rf);
                 
-                if (i > 9)
+                if (i > 12)
                 {
-                    float a = i/15;
-                    helpLayer->setPosition(0, - (a * size.height));
+                    int tmp = i;
+                    int a = tmp % 12;
+                    int b = tmp / 12;
+                    helpLayer->setPosition(0, - (b * size.height) + (a * TI()->getHeigh())/12 - TI()->getHeigh()/2);
                 }
             }
             else
             {
                 int score = UserData::getInstance()->getScore(i);
-                if (score < 10000&& i > 5)
+                if (score < 10000 && i > 5)
                 {
                     starNum_ += 1;
                     sp = Sprite::create("popup_star_bg1.png");
@@ -236,7 +235,6 @@ bool HelpScene::init()
         {
             item = MenuItemImage::create("lock_lv.png", "lock_lv.png");
             item->setCallback(CC_CALLBACK_1(HelpScene::lockBackCallback,this));
-
         }
         
         item->setTag(i);
@@ -302,7 +300,8 @@ bool HelpScene::init()
         _sign->addButton("start_bt.png", "start_bt.png", Vec2(720/2, 260), SIGN_BUTTON);
         addChild(_sign, 2000);
     }
- scheduleUpdate();
+    
+    scheduleUpdate();
     return true;
 }
 
@@ -310,8 +309,6 @@ void HelpScene::onExit()
 {
     Layer::onExit();
 }
-
-
 
 void HelpScene::menuBackCallback(Ref *pSender)
 {

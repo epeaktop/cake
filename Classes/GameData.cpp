@@ -404,7 +404,7 @@ string GameData::getAddi(int level)
     int sz = sizeof(addConf)/sizeof(addConf[0]);
     for(int i = 0; i < sz; i++)
     {
-        if (strstr(addConf[i].c_str(),_ss.str().c_str()))
+        if (TI()->startWith(addConf[i], _ss.str()))
         {
             vector<string> ret = TI()->split(addConf[i],':');
             CCASSERT(ret.size() == 2, "obstacle configure error");
@@ -424,7 +424,7 @@ string GameData::getObstacle(int level)
     int sz = sizeof(obstacleConfigure)/sizeof(obstacleConfigure[0]);
     for(int i = 0; i < sz; i++)
     {
-        if (strstr(obstacleConfigure[i].c_str(),_ss.str().c_str()))
+        if (TI()->startWith(obstacleConfigure[i], _ss.str()))
         {
             vector<string> ret = TI()->split(obstacleConfigure[i],':');
             CCASSERT(ret.size() == 2, "obstacle configure error");

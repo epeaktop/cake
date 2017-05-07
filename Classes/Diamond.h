@@ -9,7 +9,7 @@
 
 using namespace cocos2d;
 
-class Diamond : public CCSprite
+class Diamond : public Sprite
 {
 public:
 	Diamond();

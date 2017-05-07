@@ -1,4 +1,5 @@
 #include "Diamond.h"
+#include "Tools.h"
 
 const char* Diamond::TypeStr[5] = {
     "gems_blue.png",	
@@ -37,7 +38,15 @@ Diamond::Diamond()
 Diamond* Diamond::createWithSpriteFrameName(const char *pszSpriteFrameName)
 {
 	Diamond *p = new Diamond;
-
+    if (TI()->isDiamond())
+    {
+        //Texture2D* texture = Director::getInstance()->getTextureCache()->addImage(pszSpriteFrameName);
+        p->initWithFile(pszSpriteFrameName);
+        CCASSERT(p, "diamond got nil!");
+        p->autorelease();
+        return p;
+    }
+    
 	if(p && p->initWithSpriteFrameName(pszSpriteFrameName))
 	{
 		p->autorelease();

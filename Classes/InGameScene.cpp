@@ -34,8 +34,8 @@ const unsigned int InGameScene::limitScore[3] = {6000, 10000, 12000};
 const unsigned int InGameScene::limitFireball[3] = {100, 70, 30};
 const unsigned int InGameScene::limitCrazy[3] = {8, 10, 6};
 
-const int MOVES_NUM_POSX = 583;
-const int MOVES_NUM_POSY = 1140;
+const int MOVES_NUM_POSX = 26;
+const int MOVES_NUM_POSY = 1227;
 /**
  * 元素从move_number处飞行的时间
  */
@@ -148,11 +148,7 @@ bool InGameScene::init()
         moves_number_ = ret.movesNum;
 
         sp->setPosition(Vec2(winSize.width / 2, winSize.height / 2));
-        auto sp_top = Sprite::create("gui/top_bar.png");
-        addChild(sp_top, 3);
 
-
-        sp_top->setPosition(Vec2(winSize.width / 2, 1280 - 97));
         m_pRemovedDiamond = __Array::create();
         m_pRemovedDiamond->retain();
 
@@ -178,29 +174,29 @@ bool InGameScene::init()
         initGatherLayer(retEx);
 
         auto *pPauseItem = MenuItemImage::create("gui/game_stop.png", "gui/game_stop.png", this, menu_selector(InGameScene::menuPauseCallback));
-        pPauseItem->setPosition(Vec2(46, 1280 - 142));
+        pPauseItem->setPosition(Vec2(690, 1280 - 37));
 
         refreshItemNum_ = Label::createWithCharMap("gui/white_font.png", 25, 29, '0');
 
         refreshItemNum_->setString(TI()->_itos(UserData::getInstance()->getRefreshItemNum()));
-        refreshItemNum_->setPosition(89, 1280-1213);
+        refreshItemNum_->setPosition(192, 1280-135);
         refreshItemNum_->setScale(0.6);
         addChild(refreshItemNum_, 2000);
        
         moveItemNum_ = Label::createWithCharMap("gui/white_font.png", 25, 29, '0');
 //        moveItem->addChild(moveItemNum_);
         moveItemNum_->setString(TI()->_itos(UserData::getInstance()->getMoveItemNum()));
-        moveItemNum_->setPosition(654, 1280-1213);
+        moveItemNum_->setPosition(664, 1280-135);
         moveItemNum_->setScale(0.6);
         addChild(moveItemNum_, 2000);
 
         
-        CREATE_LABEL(bombItemNum, 377, 1280-1213);
-        CREATE_LABEL(colorItemNum, 231,1280-1213);
-        CREATE_LABEL(digItemNum, 522,1280-1213);
+        CREATE_LABEL(bombItemNum, 424, 1280-135);
+        CREATE_LABEL(colorItemNum, 315,1280-135);
+        CREATE_LABEL(digItemNum, 555,1280-135);
 
         auto currentLevel = Label::createWithCharMap("gui/white_font.png", 25, 29, '0');
-        currentLevel->setPosition(Vec2(720 / 2, 1280 - 150));
+        currentLevel->setPosition(Vec2(439, 1280 - 60));
         currentLevel->setString(TI()->_itos(InGameScene::level));
 
         addChild(currentLevel, 100);
@@ -230,18 +226,16 @@ bool InGameScene::init()
 
         sf = SpriteFrameAnimation::createWithPlist("gui/long.plist", 0.2);
         addChild(sf, 200);
-        sf->setPosition(720 / 2, 1280 - 75);
+        sf->setPosition(439, 1280 - 55);
 
         sf->play(-1);
 
     }
     while (0);
 
-    log("<< moves_number_(%d)", moves_number_);
     dealHp();
-    auto item_area = Sprite::create("item_area.png");
-    addChild(item_area, 200);
-    item_area->setPosition(720/2, 60);
+    posMap_.clear();
+    
     return bRet;
 }
 
@@ -300,7 +294,7 @@ void InGameScene::initScoreTarget(TargetData &ret)
 
     m_pTargetLable = Label::createWithCharMap("gui/white_font.png", 25, 29, '0');
     m_pTargetLable->retain();
-    m_pTargetLable->setPosition(Vec2(116, 1280 - 58));
+    m_pTargetLable->setPosition(Vec2(210, 1280 - 58));
     m_pTargetLable->setString(TI()->_itos(ret.targetScore));
     addChild(m_pTargetLable, 100);
 }
@@ -334,7 +328,7 @@ void InGameScene::initGatherLayer(TargetDataEx target)
     if (!gl_)
     {
         gl_ = new GatherLayer(ret.name1, ret.name2, ret.name3,
-                              Vec2(50, 1280 - 65), Vec2(120, 1280 - 65), Vec2(190, 1280 - 65));
+                              Vec2(150, 1280 - 65), Vec2(220, 1280 - 65), Vec2(290, 1280 - 65));
         gl_->setString(target.num1_, target.num2_, target.num3_);
         addChild(gl_, 2000);
     }
@@ -561,11 +555,25 @@ void InGameScene::addDiamond(float delta)
         else
         {
 			int diamondType = rand() % getDiamondType();
-			Diamond *pDiamond = Diamond::createWithSpriteFrameName(Diamond::TypeStr[diamondType]);
+            
+            stringstream _name;
+            if (!TI()->isDiamond())
+            {
+                _name << Diamond::TypeStr[diamondType];
+            }
+            else
+            {
+                auto _type = diamondType + 1;
+                _name << _type <<".png";
+            }
+            
+			Diamond *pDiamond = Diamond::createWithSpriteFrameName(_name.str().c_str());
 			pDiamond->setType(diamondType);
-			m_pDiamondBatchNode->addChild(pDiamond);
+			//m_pDiamondBatchNode->addChild(pDiamond);
+            addChild(pDiamond);
 			pDiamond->setPosition(getCreatePos(m_nDiamondRow,m_nDiamondLine));
 			m_pDiamond[m_nDiamondLine][m_nDiamondRow] = pDiamond;
+            
 		}
 
 		if (++m_nDiamondRow == m_nDiamondRowMax)
@@ -888,23 +896,23 @@ void InGameScene::onTouchMoved(Touch *pTouch, Event *pEvent)
 }
 bool InGameScene::touchColorItem(Vec2 v)
 {
-    Vec2 v1(165, 0);
+    Vec2 v1(165, 193);
     Vec2 v2(265, 1280-1183);
     return TI()->isInScope(v, v1, v2);
 }
 
 bool InGameScene::touchRefreshItem(Vec2 v)
 {
-    Vec2 v1(0, 0);
-    Vec2 v2(135 , 1280 - 1183);
+    Vec2 v1(131, 193);
+    Vec2 v2(256 , 1280 - 109);
     return TI()->isInScope(v, v1, v2);
 }
 
 
 bool InGameScene::touchMoveItem(Vec2 v)
 {
-    Vec2 v1(577, 0);
-    Vec2 v2(720, 1280-1183);
+    Vec2 v1(600, 193);
+    Vec2 v2(696, 1280-109);
     return TI()->isInScope(v, v1, v2);
 }
 
@@ -1045,9 +1053,22 @@ void InGameScene::onTouchEnded(Touch *pTouch, Event *pEvent)
 
 Vec2 InGameScene::getRandomPosition()
 {
-    int line = rand() % (m_nDiamondLineMax - 1);
-    int row  = rand() % (m_nDiamondRowMax - 1);
-
+    int line = 0;
+    int row  = 0;
+    
+    while (1)
+    {
+        line = rand() % (m_nDiamondLineMax - 1);
+        row = rand() % (m_nDiamondRowMax - 1);
+    
+        if (posMap_[line * m_nDiamondRowMax + row] != 1)
+        {
+            break;
+        }
+    }
+    
+    posMap_[line * m_nDiamondRowMax + row] = 1;
+    
     return getPositionByRowAndLine(row, line);
 }
 void InGameScene::showTime()

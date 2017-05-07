@@ -123,6 +123,7 @@ private:
     bool touchRefreshItem(Vec2 location);
     bool touchColorItem(Vec2 location);
     bool touchMoveItem(Vec2 location);
+    //string get
     
 public:
     vector<Sequence* > animList_;
@@ -205,6 +206,8 @@ private:
     int egg_num_ = 0;
 
     void registEvent();
+    
+    map<int, int> posMap_;
     
 };
 
