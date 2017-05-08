@@ -125,6 +125,8 @@ private:
     bool touchMoveItem(Vec2 location);
     string getElementName(int type);
     void drawItemIcon();
+    void drawMask(int type);
+    void deleteMask();
 public:
     vector<Sequence* > animList_;
     vector<int > posList_;

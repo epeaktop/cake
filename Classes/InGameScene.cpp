@@ -885,7 +885,8 @@ void InGameScene::onTouchMoved(Touch *pTouch, Event *pEvent)
 //                        m_moveStatus = 0;
 //                        return;
 //                    }
-
+                    deleteMask();
+                    drawMask(m_startType);
                     cur_position = getPositionByRowAndLine(row, line);
                     DrawLine();
                     last_position = cur_position;
@@ -1011,6 +1012,7 @@ void InGameScene::showMoveNumber()
 // #END
 void InGameScene::onTouchEnded(Touch *pTouch, Event *pEvent)
 {
+    deleteMask();
     m_moveStatus = -1;
     m_startType = -1;
     log("< moves_number_(%d)", moves_number_);
@@ -1603,6 +1605,44 @@ string InGameScene::getItemIconName(int type)
 
     return "item_line.png";
 }
+
+void InGameScene::deleteMask()
+{
+    for(int i = 20000; i < m_nDiamondLineMax*m_nDiamondRowMax+20000; i++)
+    {
+        auto old = getChildByTag(i);
+        if (old)
+        {
+            old->removeFromParentAndCleanup(true);
+        }
+    }
+}
+void InGameScene::drawMask(int type)
+{
+    
+    int index = 0;
+    for (int line = 0; line < m_nDiamondLineMax; ++line)
+    {
+        for (int row = 0; row < m_nDiamondRowMax; ++row)
+        {
+            auto sp = m_pDiamond[line][row];
+            if(sp == nullptr)
+            {
+                continue;
+            }
+            
+            if (sp->getType() != type)
+            {
+                auto p = Sprite::create("gui/b3.png");
+                addChild(p, 4);
+                p->setPosition(sp->getPosition());
+                p->setTag(index + 20000);
+                index++;
+            }
+        }
+    }
+}
+
 void InGameScene::drawItemIcon()
 {
     
@@ -1636,7 +1676,6 @@ void InGameScene::drawItemIcon()
             }
         }
     }
-
 }
 void InGameScene::createItemDiamond(int count)
 {
