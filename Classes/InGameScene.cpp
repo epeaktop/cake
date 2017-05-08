@@ -879,12 +879,12 @@ void InGameScene::onTouchMoved(Touch *pTouch, Event *pEvent)
                 if (count > 0)
                 {
                     // 颜色不是一样的
-                    if (m_pDiamond[line][row]->getType() != m_startType)
-                    {
-                        log("[onTouchMoved]-- line end -- line(%d),row(%d)", line, row);
-                        m_moveStatus = 0;
-                        return;
-                    }
+//                    if (m_pDiamond[line][row]->getType() != m_startType)
+//                    {
+//                        log("[onTouchMoved]-- line end -- line(%d),row(%d)", line, row);
+//                        m_moveStatus = 0;
+//                        return;
+//                    }
 
                     cur_position = getPositionByRowAndLine(row, line);
                     DrawLine();
@@ -957,7 +957,7 @@ bool InGameScene::onTouchBegan(Touch *pTouch, Event *pEvent)
         
         USER()->addcolorItemNum(-1);
         createItemDiamond(20);
-        drawItemIcon();
+        
         colorItemNum_->setString(TI()->_itos(USER()->getcolorItemNum()));
         return true;
     }
@@ -1037,7 +1037,7 @@ void InGameScene::onTouchEnded(Touch *pTouch, Event *pEvent)
     removeSelectedDiamond();
     schedule(schedule_selector(InGameScene::addRemovedDiamond), 1 / 40);
     createItemDiamond(count);
-    drawItemIcon();
+    
     moves_number_ = moves_number_ - 1;
     showMoveNumber();
 
@@ -1578,7 +1578,7 @@ void InGameScene::addEndCallback(Node *pSender)
             addRemovedDiamond(0.1f);
         }
     }
-
+    drawItemIcon();
 }
 
 string InGameScene::getItemIconName(int type)
@@ -1605,6 +1605,16 @@ string InGameScene::getItemIconName(int type)
 }
 void InGameScene::drawItemIcon()
 {
+    
+    for(int i = 10000; i < m_nDiamondLineMax*m_nDiamondRowMax+10000; i++)
+    {
+        auto old = getChildByTag(i);
+        if (old)
+        {
+            old->removeFromParentAndCleanup(true);
+        }
+    }
+    int index = 0;
     for (int line = 0; line < m_nDiamondLineMax; ++line)
     {
         for (int row = 0; row < m_nDiamondRowMax; ++row)
@@ -1614,17 +1624,15 @@ void InGameScene::drawItemIcon()
             {
                 continue;
             }
-            auto old = getChildByTag(10000 + sp->getTag());
-            if (old)
-            {
-                old->removeChildByTag(10000 + sp->getTag());
-            }
+      
             if (sp->getItemType() > -1)
             {
                 auto p = Sprite::create(getItemIconName(sp->getItemType()));
                 addChild(p, 3);
                 p->setPosition(sp->getPosition());
-                p->setTag(line * m_nDiamondRowMax + row  + 10000);
+                p->setTag(index + 10000);
+                index++;
+                TI()->shakeNode(p);
             }
         }
     }
