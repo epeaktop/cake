@@ -826,8 +826,7 @@ bool InGameScene::isNearby(int line, int row, int _type)
 
 void InGameScene::onTouchMoved(Touch *pTouch, Event *pEvent)
 {
-    log("[onTouchMoved] begin~");
-
+    log("[onTouchMoved] ==== begin ==== ");
     if (m_moveStatus == 0)
     {
         log("[onTouchMoved] m_moveStatus is ZERO. Draw line is over!");
@@ -836,6 +835,12 @@ void InGameScene::onTouchMoved(Touch *pTouch, Event *pEvent)
 
     if (m_startType >= egg_number)
     {
+        return;
+    }
+    
+    if (m_startType < 0)
+    {
+        log("[onTouchMoved] m_startType(%d)!!", m_startType);
         return;
     }
 
@@ -878,26 +883,25 @@ void InGameScene::onTouchMoved(Touch *pTouch, Event *pEvent)
 
                 if (count > 0)
                 {
-                    // 颜色不是一样的
-//                    if (m_pDiamond[line][row]->getType() != m_startType)
-//                    {
-//                        log("[onTouchMoved]-- line end -- line(%d),row(%d)", line, row);
-//                        m_moveStatus = 0;
-//                        return;
-//                    }
                     deleteMask();
                     drawMask(m_startType);
-                    cur_position = getPositionByRowAndLine(row, line);
-                    DrawLine();
-                    last_position = cur_position;
-                    m_pDiamond[line][row]->setScale(1.05);
+                    
+                    if(m_startType == m_pDiamond[line][row]->getType())
+                    {
+                        cur_position = getPositionByRowAndLine(row, line);
+                        DrawLine();
+                        last_position = cur_position;
+                        m_pDiamond[line][row]->setScale(1.05);
+                    }
                 }
-
-
-                // 将自己加入到队列中去
-                m_pDiamond[line][row]->setTag(line * m_nDiamondRowMax + row);
-                log("[move]addObject(%p)", m_pDiamond[line][row]);
-                m_pRemovedDiamond->addObject(m_pDiamond[line][row]);
+                
+                if(m_startType == m_pDiamond[line][row]->getType())
+                {
+                    // 将自己加入到队列中去
+                    m_pDiamond[line][row]->setTag(line * m_nDiamondRowMax + row);
+                    log("[move]addObject(%p)", m_pDiamond[line][row]);
+                    m_pRemovedDiamond->addObject(m_pDiamond[line][row]);
+                }
                 return;
             }
         }
@@ -907,14 +911,14 @@ void InGameScene::onTouchMoved(Touch *pTouch, Event *pEvent)
 }
 bool InGameScene::touchColorItem(Vec2 v)
 {
-    Vec2 v1(165, 193);
+    Vec2 v1(165, 1280-193);
     Vec2 v2(265, 1280-1183);
     return TI()->isInScope(v, v1, v2);
 }
 
 bool InGameScene::touchRefreshItem(Vec2 v)
 {
-    Vec2 v1(131, 193);
+    Vec2 v1(131, 1280-193);
     Vec2 v2(256 , 1280 - 109);
     return TI()->isInScope(v, v1, v2);
 }
@@ -922,7 +926,7 @@ bool InGameScene::touchRefreshItem(Vec2 v)
 
 bool InGameScene::touchMoveItem(Vec2 v)
 {
-    Vec2 v1(600, 193);
+    Vec2 v1(600, 1280-193);
     Vec2 v2(696, 1280-109);
     return TI()->isInScope(v, v1, v2);
 }
@@ -946,11 +950,13 @@ bool InGameScene::onTouchBegan(Touch *pTouch, Event *pEvent)
     if (touchRefreshItem(location))
     {
         doRefresh();
+        log("touchRefreshItem");
         return true;
     }
     
     if (touchColorItem(location))
     {
+        log("touchColorItem");
         if(USER()->getcolorItemNum() <= 0)
         {
             return true;
@@ -965,6 +971,7 @@ bool InGameScene::onTouchBegan(Touch *pTouch, Event *pEvent)
     
     if (touchMoveItem(location))
     {
+        log("touchColorItem");
         if (UserData::getInstance()->getMoveItemNum() <= 0)
         {
             return true;
@@ -1867,7 +1874,7 @@ void InGameScene::menuPauseCallback(Ref *pSender)
 
     m_pPause = PauseLayer::create();
     m_pPause->retain();
-    this->addChild(m_pPause);
+    this->addChild(m_pPause, 100);
 
     this->schedule(schedule_selector(InGameScene::updatePaused), 1 / 60);
 }
