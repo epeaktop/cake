@@ -823,7 +823,15 @@ bool InGameScene::isNearby(int line, int row, int _type)
 
     return false;
 }
+bool InGameScene::isTooFar(Vec2 v1, Vec2 v2)
+{
+    auto a = fabs(v1.x - v2.x);
+    auto b = fabs(v1.y - v2.y);
+    
+    
+    return !(a <= 130 && b <= 130);
 
+}
 void InGameScene::onTouchMoved(Touch *pTouch, Event *pEvent)
 {
     log("[onTouchMoved] ==== begin ==== ");
@@ -885,10 +893,15 @@ void InGameScene::onTouchMoved(Touch *pTouch, Event *pEvent)
                 {
                     deleteMask();
                     drawMask(m_startType);
+                    if(isTooFar(getPositionByRowAndLine(row, line), last_position))
+                    {
+                        return;
+                    }
                     
                     if(m_startType == m_pDiamond[line][row]->getType())
                     {
                         cur_position = getPositionByRowAndLine(row, line);
+                        
                         DrawLine();
                         last_position = cur_position;
                         m_pDiamond[line][row]->setScale(1.05);

@@ -127,6 +127,8 @@ private:
     void drawItemIcon();
     void drawMask(int type);
     void deleteMask();
+    bool isTooFar(Vec2 v1, Vec2 v2);
+ 
 public:
     vector<Sequence* > animList_;
     vector<int > posList_;
